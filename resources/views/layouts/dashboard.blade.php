@@ -78,6 +78,18 @@
         default => [],
     }, [], false);
     // Menu bawah (khusus HP): 4 pintasan + tombol "Menu"
+    // Tombol Chat di HP membuka pilihan ruang chat: pribadi atau grup
+    $pilihanChat = match ($user->role) {
+        'admin' => [
+            ['Chat Pribadi', 'Percakapan satu-satu dengan tiap orang tua', 'chat.index', 'message-circle', 'bg-sky-soft text-sky'],
+            ['Grup Orang Tua', 'Satu ruang untuk admin & semua orang tua', 'chat.grup', 'users-round', 'bg-leaf-soft text-emerald-600'],
+        ],
+        'orangtua' => [
+            ['Chat dengan Admin', 'Percakapan pribadi, hanya Anda & admin', 'chat.pribadi', 'message-circle', 'bg-sky-soft text-sky'],
+            ['Grup Orang Tua', 'Ngobrol bersama admin & semua orang tua', 'chat.grup', 'users-round', 'bg-leaf-soft text-emerald-600'],
+        ],
+        default => [],
+    };
     $navBawah = match ($user->role) {
         'admin' => [
             ['Ringkasan', 'admin.dashboard', 'layout-dashboard', 'admin.dashboard'],
@@ -199,9 +211,36 @@
 </div>
 {{-- Menu bawah (HP) --}}
 <style>
+    @keyframes naik { from { transform: translateY(12px); opacity: 0 } to { transform: none; opacity: 1 } }
     html.dark .nav-bawah { background-color: rgba(21, 34, 56, .95); border-color: #24365a; }
     @media (max-width: 1023px) { .chat-ruang { height: calc(100dvh - 16rem) !important; } }
 </style>
+@if ($pilihanChat)
+{{-- Pilihan ruang chat (HP) --}}
+<div id="pilih-chat" class="print:hidden lg:hidden fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-labelledby="judul-pilih-chat">
+    <div onclick="pilihChat(false)" class="absolute inset-0 bg-navy-deep/50 backdrop-blur-[2px]"></div>
+    <div class="absolute inset-x-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] mx-auto max-w-md bg-white rounded-3xl shadow-2xl p-4 animate-[naik_.2s_ease-out]">
+        <div class="flex items-center justify-between px-1 pb-3">
+            <p id="judul-pilih-chat" class="font-display text-lg font-semibold text-navy">Pilih ruang chat</p>
+            <button type="button" onclick="pilihChat(false)" class="p-1.5 rounded-xl text-slate-500 hover:bg-cloud" aria-label="Tutup"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="space-y-2">
+            @foreach ($pilihanChat as [$judul, $ket, $rute, $ikon, $warna])
+                @php $n = $badge[$rute] ?? 0; $di = request()->routeIs($rute, $rute . '.*'); @endphp
+                <a href="{{ route($rute) }}" class="flex items-center gap-3 p-3 rounded-2xl border {{ $di ? 'border-sky bg-sky-soft/60' : 'border-slate-100 hover:bg-cloud' }}">
+                    <span class="w-12 h-12 shrink-0 rounded-2xl grid place-items-center {{ $warna }}"><i data-lucide="{{ $ikon }}" class="w-6 h-6"></i></span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block font-extrabold text-navy">{{ $judul }}</span>
+                        <span class="block text-xs text-slate-500">{{ $ket }}</span>
+                    </span>
+                    @if ($n)<span class="min-w-[22px] h-[22px] px-1.5 text-[11px] font-extrabold bg-berry text-white rounded-full grid place-items-center">{{ $n > 99 ? '99+' : $n }}</span>@endif
+                    <svg class="w-5 h-5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                </a>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
 <nav class="print:hidden lg:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 pointer-events-none" aria-label="Menu cepat">
     <div class="nav-bawah pointer-events-auto mx-auto max-w-md grid grid-cols-5 bg-white/95 backdrop-blur border border-slate-100 rounded-2xl shadow-[0_8px_30px_rgba(15,38,80,.15)]">
         @foreach ($navBawah as [$label, $route, $icon, $pattern])
@@ -209,6 +248,14 @@
                 $aktif = request()->routeIs($pattern);
                 $jumlah = $label === 'Chat' ? collect($badge)->filter(fn ($v, $k) => str_starts_with($k, 'chat.'))->sum() : ($badge[$route] ?? 0);
             @endphp
+            @if ($label === 'Chat' && $pilihanChat)
+            <button type="button" onclick="pilihChat(true)" aria-haspopup="dialog" @if($aktif) aria-current="page" @endif class="relative flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold {{ $aktif ? 'text-sky' : 'text-slate-500' }}">
+                <span class="grid place-items-center w-11 h-7 rounded-full {{ $aktif ? 'bg-sky-soft' : '' }}"><i data-lucide="{{ $icon }}" class="w-5 h-5"></i></span>
+                {{ $label }}
+                @if ($jumlah)<span class="absolute top-1 right-[calc(50%-1.4rem)] min-w-[18px] h-[18px] px-1 text-[10px] bg-berry text-white rounded-full grid place-items-center">{{ $jumlah > 99 ? '99+' : $jumlah }}</span>@endif
+            </button>
+            @continue
+            @endif
             <a href="{{ route($route) }}" @if($aktif) aria-current="page" @endif class="relative flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold {{ $aktif ? 'text-sky' : 'text-slate-500' }}">
                 <span class="grid place-items-center w-11 h-7 rounded-full {{ $aktif ? 'bg-sky-soft' : '' }}"><i data-lucide="{{ $icon }}" class="w-5 h-5"></i></span>
                 {{ $label }}
@@ -231,7 +278,11 @@
         l.classList.toggle('pointer-events-none', !buka);
         document.body.classList.toggle('overflow-hidden', buka);
     }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleSidebar(false); });
+    function pilihChat(buka) {
+        const d = document.getElementById('pilih-chat');
+        if (d) d.classList.toggle('hidden', !buka);
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { toggleSidebar(false); pilihChat(false); } });
 
     // Jam WIB, salam, dan tema otomatis dikelola di partials/tema.blade.php
 
