@@ -17,7 +17,7 @@ class ChatController extends Controller
         if ($request->user()->role === User::ORANG_TUA) return redirect()->route('chat.pribadi');
 
         $ringkas = ChatPesan::where('jenis', 'pribadi')
-            ->selectRaw('orang_tua_id, max(id) as terakhir_id, sum(case when dibaca = 0 and pengirim_id = orang_tua_id then 1 else 0 end) as belum')
+            ->selectRaw('orang_tua_id, max(id) as terakhir_id, sum(case when not dibaca and pengirim_id = orang_tua_id then 1 else 0 end) as belum')
             ->groupBy('orang_tua_id')->get()->keyBy('orang_tua_id');
 
         return view('chat.index', [

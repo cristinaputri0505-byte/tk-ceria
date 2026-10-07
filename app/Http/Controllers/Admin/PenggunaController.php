@@ -22,7 +22,7 @@ class PenggunaController extends Controller
 
         $pengguna = User::where('role', $role)
             ->withCount('anak')
-            ->when($request->q, fn ($q, $s) => $q->where(fn ($w) => $w->where('name', 'like', "%$s%")->orWhere('email', 'like', "%$s%")))
+            ->when($request->q, fn ($q, $s) => $q->where(fn ($w) => $w->whereLike('name', "%$s%")->orWhereLike('email', "%$s%")))
             ->orderBy('name')->paginate(15)->withQueryString();
 
         return view('admin.pengguna.index', ['pengguna' => $pengguna, 'role' => $role, 'roles' => self::ROLES]);

@@ -15,7 +15,7 @@ class SiswaController extends Controller
     public function index(Request $request)
     {
         $siswa = Siswa::with(['kelas', 'orangTua'])
-            ->when($request->q, fn ($q, $s) => $q->where(fn ($w) => $w->where('nama', 'like', "%$s%")->orWhere('nis', 'like', "%$s%")))
+            ->when($request->q, fn ($q, $s) => $q->where(fn ($w) => $w->whereLike('nama', "%$s%")->orWhereLike('nis', "%$s%")))
             ->when($request->kelas_id, fn ($q, $k) => $q->where('kelas_id', $k))
             ->orderBy('nama')->paginate(15)->withQueryString();
 

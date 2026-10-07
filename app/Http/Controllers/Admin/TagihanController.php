@@ -21,7 +21,7 @@ class TagihanController extends Controller
             ->when($request->jenis, fn ($q, $j) => $q->where('jenis', $j))
             ->when($request->periode, fn ($q, $p) => $q->where('periode', $p))
             ->when($request->kelas_id, fn ($q, $k) => $q->whereHas('siswa', fn ($s) => $s->where('kelas_id', $k)))
-            ->when($request->q, fn ($q, $s) => $q->whereHas('siswa', fn ($w) => $w->where('nama', 'like', "%$s%")->orWhere('nis', 'like', "%$s%")));
+            ->when($request->q, fn ($q, $s) => $q->whereHas('siswa', fn ($w) => $w->whereLike('nama', "%$s%")->orWhereLike('nis', "%$s%")));
 
         $ringkas = $filter(Tagihan::query())->selectRaw('status, count(*) as n, sum(jumlah) as total')->groupBy('status')->get()->keyBy('status');
 
