@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         \App\Providers\NotifikasiServiceProvider::class,
     ])
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->append(\App\Http\Middleware\HeaderKeamanan::class);
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);

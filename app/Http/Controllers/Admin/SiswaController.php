@@ -46,7 +46,7 @@ class SiswaController extends Controller
 
     public function destroy(Siswa $siswa)
     {
-        if ($siswa->foto) Storage::disk('public')->delete($siswa->foto);
+        if ($siswa->foto) Storage::disk('local')->delete($siswa->foto);
         $siswa->delete();
         return back()->with('success', 'Data siswa dihapus.');
     }
@@ -88,8 +88,8 @@ class SiswaController extends Controller
         unset($data['foto']);
 
         if ($request->hasFile('foto')) {
-            if ($siswa?->foto) Storage::disk('public')->delete($siswa->foto);
-            $data['foto'] = $request->file('foto')->store('siswa', 'public');
+            if ($siswa?->foto) Storage::disk('local')->delete($siswa->foto);
+            $data['foto'] = $request->file('foto')->store('siswa', 'local');
         }
 
         return $data;

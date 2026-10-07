@@ -46,7 +46,8 @@ class Siswa extends Model
 
     public function getFotoUrlAttribute(): ?string
     {
-        return $this->foto ? asset('storage/' . $this->foto) : null;
+        // Foto anak disimpan privat dan hanya dibuka lewat route yang memeriksa hak akses
+        return $this->foto ? route('siswa.foto', ['siswa' => $this->id, 'v' => substr(md5($this->foto), 0, 8)]) : null;
     }
 
     public function getUsiaAttribute(): string

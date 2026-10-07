@@ -23,11 +23,11 @@ Route::get('/kegiatan/{kegiatan}', [PageController::class, 'kegiatanShow'])->nam
 Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
 Route::get('/guru-staff', [PageController::class, 'guru'])->name('guru');
 Route::get('/kontak', [PageController::class, 'kontak'])->name('kontak');
-Route::post('/kontak', [PageController::class, 'kontakKirim'])->middleware('throttle:5,1')->name('kontak.kirim');
+Route::post('/kontak', [PageController::class, 'kontakKirim'])->middleware('throttle:formulir')->name('kontak.kirim');
 Route::get('/berita', [HomeController::class, 'berita'])->name('berita.index');
 Route::get('/berita/{berita}', [HomeController::class, 'beritaShow'])->name('berita.show');
 Route::get('/pendaftaran', [PendaftaranController::class, 'create'])->name('pendaftaran.create');
-Route::post('/pendaftaran', [PendaftaranController::class, 'store'])->name('pendaftaran.store');
+Route::post('/pendaftaran', [PendaftaranController::class, 'store'])->middleware('throttle:formulir')->name('pendaftaran.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ Route::post('/pendaftaran', [PendaftaranController::class, 'store'])->name('pend
 */
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1')->name('login.attempt');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login.attempt');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::post('/kembali-ke-admin', [AuthController::class, 'kembaliAdmin'])->middleware('auth')->name('kembali.admin');
@@ -119,6 +119,7 @@ Route::middleware(['auth', 'role:orangtua'])->prefix('orangtua')->name('orangtua
 */
 Route::middleware('auth')->group(function () {
     Route::get('berkas/dokumentasi/{dokumentasi}', [FileController::class, 'dokumentasi'])->name('dokumentasi.foto');
+    Route::get('berkas/foto-siswa/{siswa}', [FileController::class, 'fotoSiswa'])->name('siswa.foto');
     Route::get('berkas/bukti/{tagihan}', [FileController::class, 'bukti'])->name('tagihan.bukti');
     Route::get('kuitansi/{tagihan}', [FileController::class, 'kuitansi'])->name('tagihan.kuitansi');
 });

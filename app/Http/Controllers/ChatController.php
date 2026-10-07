@@ -131,7 +131,7 @@ class ChatController extends Controller
 
         return [
             'id' => $m->id,
-            'mine' => $m->pengirim_id === $saya->id,
+            'mine' => (int) $m->pengirim_id === (int) $saya->id,
             'nama' => $m->pengirim->name ?? 'Pengguna',
             'admin' => ($m->pengirim->role ?? null) === User::ADMIN,
             'isi' => $m->isi,

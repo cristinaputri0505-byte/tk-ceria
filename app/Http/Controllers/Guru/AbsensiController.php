@@ -14,7 +14,9 @@ class AbsensiController extends Controller
     {
         $kelasList = $this->kelasUntuk($request);
         $kelas = $kelasList->firstWhere('id', (int) $request->kelas_id) ?? $kelasList->first();
-        $tanggal = $request->date('tanggal') ?? today();
+        // Tanggal dari URL bisa saja rusak (mis. ?tanggal=abc); jangan sampai error 500.
+        $tanggal = rescue(fn () => $request->date('tanggal'), null, false) ?? today();
+        if ($tanggal->isFuture()) $tanggal = today();
 
         $siswa = $kelas ? $kelas->siswa()->orderBy('nama')->get() : collect();
         $absensi = $kelas

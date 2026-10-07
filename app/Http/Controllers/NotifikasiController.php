@@ -30,7 +30,7 @@ class NotifikasiController extends Controller
 
     public function buka(Request $request, Notifikasi $notifikasi)
     {
-        abort_unless($notifikasi->user_id === $request->user()->id, 403);
+        abort_unless((int) $notifikasi->user_id === (int) $request->user()->id, 403);
         if (! $notifikasi->dibaca_at) $notifikasi->update(['dibaca_at' => now()]);
 
         return redirect($notifikasi->url ?: route('notifikasi.index'));

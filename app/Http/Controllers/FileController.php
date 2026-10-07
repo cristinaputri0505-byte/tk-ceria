@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dokumentasi;
+use App\Models\Siswa;
 use App\Models\Tagihan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,6 +18,19 @@ class FileController extends Controller
         abort_unless(Storage::disk('local')->exists($dokumentasi->gambar), 404);
 
         return Storage::disk('local')->response($dokumentasi->gambar, null, ['Cache-Control' => 'private, max-age=86400']);
+    }
+
+    /** Foto anak: admin, wali kelasnya, dan orang tuanya sendiri. */
+    public function fotoSiswa(Request $request, Siswa $siswa)
+    {
+        $u = $request->user();
+        $boleh = $u->role === User::ADMIN
+            || ($u->role === User::GURU && (int) optional($siswa->kelas)->wali_guru_id === $u->id)
+            || (int) $siswa->orang_tua_id === $u->id;
+        abort_unless($boleh, 403);
+        abort_unless($siswa->foto && Storage::disk('local')->exists($siswa->foto), 404);
+
+        return Storage::disk('local')->response($siswa->foto, null, ['Cache-Control' => 'private, max-age=604800']);
     }
 
     public function bukti(Request $request, Tagihan $tagihan)

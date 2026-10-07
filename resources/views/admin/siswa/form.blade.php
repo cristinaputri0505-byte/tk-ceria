@@ -18,7 +18,7 @@
         @include('partials.field', ['name' => 'anak_ke', 'label' => 'Anak ke', 'type' => 'number', 'value' => $siswa->anak_ke, 'required' => false, 'attrs' => 'min=1'])
         @include('partials.field', ['name' => 'tanggal_masuk', 'label' => 'Tanggal masuk', 'type' => 'date', 'value' => $siswa->tanggal_masuk?->format('Y-m-d'), 'required' => false])
         @include('partials.textarea', ['name' => 'alamat', 'label' => 'Alamat', 'value' => $siswa->alamat, 'required' => false, 'rows' => 2, 'class' => 'sm:col-span-2 lg:col-span-3'])
-        @include('partials.file', ['name' => 'foto', 'label' => 'Foto anak', 'current' => $siswa->foto, 'class' => 'sm:col-span-2 lg:col-span-3'])
+        @include('partials.file', ['name' => 'foto', 'label' => 'Foto anak', 'current' => $siswa->foto, 'currentUrl' => $siswa->foto_url, 'class' => 'sm:col-span-2 lg:col-span-3'])
     </fieldset>
 
     <fieldset class="bg-white rounded-3xl border border-slate-100 p-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
