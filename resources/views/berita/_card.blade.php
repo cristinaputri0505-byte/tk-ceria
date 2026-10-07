@@ -1,7 +1,7 @@
 <a href="{{ route('berita.show', $b) }}" class="group block bg-white rounded-3xl overflow-hidden border border-slate-100 h-full">
     <div class="aspect-[16/9] bg-gradient-to-br from-sky-100 to-amber-100 grid place-items-center">
         @if ($b->gambar)
-            <img src="{{ asset('storage/'.$b->gambar) }}" alt="" class="w-full h-full object-cover" loading="lazy">
+            <img src="{{ Storage::disk('public')->url($b->gambar) }}" alt="" class="w-full h-full object-cover" loading="lazy">
         @else
             <i data-lucide="newspaper" class="w-10 h-10 text-navy/25"></i>
         @endif

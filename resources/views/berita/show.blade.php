@@ -6,7 +6,7 @@
     <p class="text-sm font-bold text-slate-400 mt-6">{{ $berita->published_at->translatedFormat('l, d F Y') }}</p>
     <h1 class="font-display text-4xl font-semibold text-navy mt-1 leading-tight">{{ $berita->judul }}</h1>
     @if ($berita->gambar)
-        <img src="{{ asset('storage/'.$berita->gambar) }}" alt="" class="w-full rounded-3xl mt-6">
+        <img src="{{ Storage::disk('public')->url($berita->gambar) }}" alt="" class="w-full rounded-3xl mt-6">
     @endif
     <div class="mt-6 text-[16px] leading-[1.8] space-y-4">
         @foreach (preg_split("/\n\s*\n/", e($berita->isi)) as $par)

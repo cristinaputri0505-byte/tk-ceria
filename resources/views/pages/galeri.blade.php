@@ -15,8 +15,8 @@
     <ul class="columns-2 sm:columns-3 lg:columns-4 gap-4 [&>li]:mb-4">
         @forelse ($foto as $g)
             <li class="break-inside-avoid">
-                <button type="button" class="block w-full text-left group" data-foto="{{ asset('storage/'.$g->gambar) }}" data-judul="{{ $g->judul }}">
-                    <img src="{{ asset('storage/'.$g->gambar) }}" alt="{{ $g->judul ?? 'Foto kegiatan' }}" class="w-full rounded-2xl" loading="lazy">
+                <button type="button" class="block w-full text-left group" data-foto="{{ Storage::disk('public')->url($g->gambar) }}" data-judul="{{ $g->judul }}">
+                    <img src="{{ Storage::disk('public')->url($g->gambar) }}" alt="{{ $g->judul ?? 'Foto kegiatan' }}" class="w-full rounded-2xl" loading="lazy">
                     @if ($g->judul)<span class="block text-[13px] font-bold text-navy mt-1.5">{{ $g->judul }}</span>@endif
                 </button>
             </li>

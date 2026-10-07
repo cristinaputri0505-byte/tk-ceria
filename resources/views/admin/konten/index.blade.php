@@ -18,7 +18,7 @@
             @if ($kolomGambar)
                 <div class="aspect-[4/3] bg-gradient-to-br from-sky-100 to-amber-50 grid place-items-center">
                     @if ($item->$kolomGambar)
-                        <img src="{{ asset('storage/'.$item->$kolomGambar) }}" alt="" class="w-full h-full object-cover" loading="lazy">
+                        <img src="{{ Storage::disk('public')->url($item->$kolomGambar) }}" alt="" class="w-full h-full object-cover" loading="lazy">
                     @else
                         <span class="font-display text-3xl text-sky">{{ mb_substr($item->$kolomJudul ?? '?', 0, 1) }}</span>
                     @endif

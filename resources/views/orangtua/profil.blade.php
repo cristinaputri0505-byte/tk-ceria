@@ -7,7 +7,7 @@
         @csrf @method('PUT')
         <div class="sm:col-span-2 flex items-center gap-4">
             @if ($user->foto)
-                <img src="{{ asset('storage/'.$user->foto) }}" alt="" class="w-20 h-20 rounded-full object-cover">
+                <img src="{{ Storage::disk('public')->url($user->foto) }}" alt="" class="w-20 h-20 rounded-full object-cover">
             @else
                 <span class="w-20 h-20 rounded-full grid place-items-center bg-sky-soft font-display text-3xl text-sky">{{ $user->inisial }}</span>
             @endif

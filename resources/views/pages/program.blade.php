@@ -7,7 +7,7 @@
         @php [$bg, $ic] = $p->kelas_warna; @endphp
         <article class="{{ $bg }} rounded-[2rem] p-6 sm:p-8 grid {{ $p->gambar ? 'md:grid-cols-[1fr_1.4fr]' : '' }} gap-8 items-center">
             @if ($p->gambar)
-                <img src="{{ asset('storage/'.$p->gambar) }}" alt="{{ $p->nama }}" class="w-full aspect-[4/3] object-cover rounded-3xl {{ $i % 2 ? 'md:order-2' : '' }}">
+                <img src="{{ Storage::disk('public')->url($p->gambar) }}" alt="{{ $p->nama }}" class="w-full aspect-[4/3] object-cover rounded-3xl {{ $i % 2 ? 'md:order-2' : '' }}">
             @endif
             <div>
                 <span class="w-14 h-14 grid place-items-center rounded-full {{ $ic }}"><i data-lucide="{{ $p->ikon }}" class="w-7 h-7"></i></span>

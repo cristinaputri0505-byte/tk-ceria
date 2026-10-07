@@ -30,7 +30,21 @@ return [
 
     'disks' => [
 
-        'local' => [
+        /*
+        | Disk 'local' (PRIVAT: foto anak, dokumentasi, bukti bayar, lampiran chat) dan
+        | disk 'public' (galeri, logo, berita, foto guru). Di laptop (Laragon) keduanya
+        | memakai folder storage/. Di Vercel, isi SUPABASE_STORAGE=true agar keduanya
+        | memakai Supabase Storage, karena sistem file server Vercel tidak permanen.
+        */
+        'local' => env('SUPABASE_STORAGE', false) ? [
+            'driver' => 'supabase',
+            'url_project' => env('SUPABASE_URL'),
+            'key' => env('SUPABASE_SECRET_KEY'),
+            'bucket' => env('SUPABASE_BUCKET_PRIVAT', 'tk-ceria-privat'),
+            'public' => false,
+            'throw' => true,
+            'report' => true,
+        ] : [
             'driver' => 'local',
             'root' => storage_path('app/private'),
             'serve' => true,
@@ -38,14 +52,26 @@ return [
             'report' => false,
         ],
 
-        'public' => [
+        'public' => env('SUPABASE_STORAGE', false) ? [
+            'driver' => 'supabase',
+            'url_project' => env('SUPABASE_URL'),
+            'key' => env('SUPABASE_SECRET_KEY'),
+            'bucket' => env('SUPABASE_BUCKET_PUBLIK', 'tk-ceria-publik'),
+            'public' => true,
+            'throw' => true,
+            'report' => true,
+        ] : [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => '/storage', // relatif: tetap benar walau APP_URL berbeda dengan alamat yang dibuka
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
         ],
+
+        // Folder lokal asli, dipakai perintah tk:pindah-file-ke-supabase
+        'arsip_privat' => ['driver' => 'local', 'root' => storage_path('app/private'), 'throw' => false],
+        'arsip_publik' => ['driver' => 'local', 'root' => storage_path('app/public'), 'throw' => false],
 
         's3' => [
             'driver' => 's3',

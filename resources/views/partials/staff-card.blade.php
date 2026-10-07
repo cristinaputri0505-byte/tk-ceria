@@ -1,6 +1,6 @@
 <div class="text-center">
     @if ($s->foto)
-        <img src="{{ asset('storage/'.$s->foto) }}" alt="" class="{{ $besar ?? false ? 'w-32 h-32' : 'w-20 h-20' }} mx-auto rounded-full object-cover border-4 border-white shadow">
+        <img src="{{ Storage::disk('public')->url($s->foto) }}" alt="" class="{{ $besar ?? false ? 'w-32 h-32' : 'w-20 h-20' }} mx-auto rounded-full object-cover border-4 border-white shadow">
     @else
         <span class="{{ $besar ?? false ? 'w-32 h-32 text-4xl' : 'w-20 h-20 text-2xl' }} mx-auto rounded-full grid place-items-center bg-sky-soft font-display text-sky border-4 border-white shadow">{{ $s->inisial }}</span>
     @endif

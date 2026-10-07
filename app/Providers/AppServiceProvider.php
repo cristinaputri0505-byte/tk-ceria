@@ -6,7 +6,10 @@ use App\Support\Pengaturan;
 use Carbon\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Filesystem;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,6 +22,14 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Driver penyimpanan Supabase Storage (lihat config/filesystems.php)
+        Storage::extend('supabase', function ($app, array $config) {
+            $adapter = new \App\Support\SupabaseStorageAdapter(
+                (string) $config['url_project'], (string) $config['key'], (string) $config['bucket'], (bool) ($config['public'] ?? false)
+            );
+            return new FilesystemAdapter(new Filesystem($adapter, $config), $adapter, $config);
+        });
+
         // Tanggal tampil dalam Bahasa Indonesia (Senin, 7 Oktober 2026)
         Carbon::setLocale(config('app.locale', 'id'));
 

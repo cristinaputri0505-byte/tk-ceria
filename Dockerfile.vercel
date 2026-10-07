@@ -1,0 +1,50 @@
+# ============================================================
+#  TK Ceria di Vercel (container FrankenPHP)
+#  Dibangun otomatis oleh Vercel setiap kali Anda git push.
+#  Rahasia (APP_KEY, password database, kunci Supabase) TIDAK ada di sini:
+#  semuanya diisi di Vercel → Settings → Environment Variables.
+# ============================================================
+FROM dunglas/frankenphp:1-php8.4-bookworm AS base
+
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
+    && install-php-extensions intl zip pdo_pgsql opcache \
+    && { echo 'upload_max_filesize=6M'; echo 'post_max_size=40M'; echo 'memory_limit=256M'; echo 'expose_php=Off'; } > "$PHP_INI_DIR/conf.d/tk-ceria.ini"
+
+WORKDIR /app
+
+FROM base AS dependencies
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader --prefer-dist
+
+COPY . .
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public bootstrap/cache \
+    && composer dump-autoload --no-dev --classmap-authoritative \
+    && php artisan view:cache \
+    && php artisan event:cache
+
+FROM base AS runtime
+
+COPY --from=dependencies --chown=www-data:www-data /app /app
+COPY --chown=www-data:www-data Caddyfile /etc/frankenphp/Caddyfile
+
+RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
+    && chown -R www-data:www-data /config/caddy /data/caddy
+
+# Nilai bawaan yang aman; bisa ditimpa dari Environment Variables Vercel
+ENV PORT=80 \
+    APP_ENV=production \
+    APP_DEBUG=false \
+    LOG_CHANNEL=stderr \
+    SESSION_DRIVER=database \
+    CACHE_STORE=database \
+    QUEUE_CONNECTION=sync \
+    SUPABASE_STORAGE=true \
+    TRUSTED_PROXIES=* \
+    DB_CONNECTION=pgsql \
+    DB_SSLMODE=require
+
+USER www-data
+
+CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]

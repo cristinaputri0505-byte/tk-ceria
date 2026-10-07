@@ -8,7 +8,7 @@
     @forelse ($kegiatan as $k)
         <li class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
             <div class="aspect-[4/3] bg-gradient-to-br from-amber-100 to-sky-100 grid place-items-center">
-                @if ($k->gambar)<img src="{{ asset('storage/'.$k->gambar) }}" alt="" class="w-full h-full object-cover">@else<i data-lucide="image" class="w-8 h-8 text-navy/30"></i>@endif
+                @if ($k->gambar)<img src="{{ Storage::disk('public')->url($k->gambar) }}" alt="" class="w-full h-full object-cover">@else<i data-lucide="image" class="w-8 h-8 text-navy/30"></i>@endif
             </div>
             <div class="p-4 flex items-start justify-between gap-2">
                 <div><p class="font-bold text-navy">{{ $k->judul }}</p><p class="text-xs text-slate-500">{{ $k->tanggal->translatedFormat('d F Y') }}</p></div>

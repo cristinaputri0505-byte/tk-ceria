@@ -257,7 +257,7 @@ class Pengaturan
     public static function url(string $key, ?string $cadangan = null): ?string
     {
         $path = static::semua()[$key] ?? null;
-        if ($path) return asset('storage/' . $path);
+        if ($path) return \Illuminate\Support\Facades\Storage::disk('public')->url($path);
         if ($cadangan && file_exists(public_path($cadangan))) return asset($cadangan);
         return null;
     }

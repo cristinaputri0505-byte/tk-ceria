@@ -17,7 +17,7 @@
             @if ($tipe === 'image')
                 <div class="flex flex-wrap items-start gap-4">
                     @if ($item->$key)
-                        <img src="{{ asset('storage/'.$item->$key) }}" alt="Gambar saat ini" class="h-28 max-w-[220px] rounded-xl object-cover">
+                        <img src="{{ Storage::disk('public')->url($item->$key) }}" alt="Gambar saat ini" class="h-28 max-w-[220px] rounded-xl object-cover">
                     @endif
                     <div class="flex-1 min-w-[220px] space-y-2">
                         <input id="f_{{ $key }}" name="{{ $multi ? $key.'[]' : $key }}" type="file" accept="image/*" @if($multi) multiple @endif @if(($opsi['wajib_baru'] ?? false) && ! $item->exists) required @endif

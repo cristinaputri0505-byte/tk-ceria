@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         \App\Providers\NotifikasiServiceProvider::class,
     ])
     ->withMiddleware(function (Middleware $middleware) {
+        // Di Vercel isi TRUSTED_PROXIES=* agar alamat https & IP pengunjung terbaca benar. Di laptop biarkan kosong.
+        if (env('TRUSTED_PROXIES')) $middleware->trustProxies(at: env('TRUSTED_PROXIES'));
         $middleware->append(\App\Http\Middleware\HeaderKeamanan::class);
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,

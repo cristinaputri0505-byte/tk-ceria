@@ -20,7 +20,7 @@
     @elseif ($tipe === 'image')
         <div class="flex flex-wrap items-start gap-4">
             @if (! empty($nilai[$key]))
-                <img src="{{ asset('storage/'.$nilai[$key]) }}" alt="Gambar saat ini" class="h-28 max-w-[220px] rounded-xl object-cover border border-slate-100">
+                <img src="{{ Storage::disk('public')->url($nilai[$key]) }}" alt="Gambar saat ini" class="h-28 max-w-[220px] rounded-xl object-cover border border-slate-100">
             @else
                 <span class="h-28 w-40 rounded-xl bg-cloud border border-dashed border-slate-300 grid place-items-center text-xs text-slate-500 text-center px-3">Memakai gambar bawaan</span>
             @endif
