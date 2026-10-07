@@ -1,5 +1,5 @@
 {{-- Ruang obrolan bersama. Parameter: $dataUrl, $kirimUrl, $ortuId (boleh null), $tampilNama (bool), $kosong (teks) --}}
-<div class="flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden max-w-3xl" style="height: calc(100vh - 13rem); min-height: 420px">
+<div class="chat-ruang flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden max-w-3xl" style="height: calc(100vh - 13rem); min-height: 420px">
     <div id="chat-isi" class="flex-1 overflow-y-auto p-4 space-y-2" aria-live="polite">
         <p id="chat-kosong" class="text-center text-sm text-slate-500 py-10">{{ $kosong }}</p>
     </div>
