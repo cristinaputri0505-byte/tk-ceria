@@ -1,6 +1,6 @@
 /.phpunit.cache
 /node_modules
-/public/build
+# /public/build ikut di-commit agar hosting tanpa Node.js tetap bisa menampilkan CSS
 /public/hot
 /public/storage
 /storage/*.key

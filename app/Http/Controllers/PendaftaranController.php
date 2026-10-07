@@ -24,7 +24,13 @@ class PendaftaranController extends Controller
             'telepon' => 'required|string|max:20',
             'email' => 'nullable|email|max:100',
             'alamat' => 'required|string|max:255',
-        ]);
+            'setuju_privasi' => 'accepted',
+            'izin_foto_publik' => 'nullable|boolean',
+        ], ['setuju_privasi.accepted' => 'Pendaftaran memerlukan persetujuan Kebijakan Privasi.']);
+
+        $data['setuju_privasi_pada'] = now();
+        $data['izin_foto_publik'] = $request->boolean('izin_foto_publik');
+        unset($data['setuju_privasi']);
 
         Pendaftaran::create($data + ['status' => 'baru']);
 

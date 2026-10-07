@@ -14,6 +14,7 @@
         'pembayaran' => 'bg-emerald-100 text-emerald-700',
         'pengumuman' => 'bg-rose-100 text-rose-600',
         'chat' => 'bg-sky-soft text-sky',
+        'akun' => 'bg-violet-50 text-violet-700',
     ];
     $tab = fn ($aktif) => 'inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full ' . ($aktif ? 'bg-navy text-white' : 'bg-white border border-slate-100 text-navy hover:bg-cloud');
 @endphp

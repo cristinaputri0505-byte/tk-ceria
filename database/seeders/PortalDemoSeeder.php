@@ -18,6 +18,11 @@ class PortalDemoSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->error('PortalDemoSeeder dibatalkan di mode produksi.');
+            return;
+        }
+
         $ayah = ['Budi Santoso', 'Agus Wijaya', 'Hendra Kurniawan', 'Rizky Ramadhan', 'Andi Pratama', 'Yusuf Hidayat', 'Fajar Nugroho', 'Dedi Saputra'];
         $ibu = ['Dewi Anggraini', 'Ratna Sari', 'Lina Marlina', 'Fitri Handayani', 'Nur Aini', 'Siti Aminah', 'Maya Puspita', 'Indah Permata'];
         $kerja = ['Karyawan swasta', 'Wiraswasta', 'PNS', 'Guru', 'Dokter', 'Ibu rumah tangga'];

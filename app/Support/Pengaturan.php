@@ -177,6 +177,17 @@ class Pengaturan
                 'login_bantuan' => ['Teks bantuan di bawah tombol masuk', 'textarea', 'Belum punya akun? Akun orang tua dibuat oleh admin setelah anak terdaftar.'],
             ], ['Pengumuman' => 'admin.pengumuman.index', 'Tagihan' => 'admin.tagihan.index', 'Dokumentasi' => 'admin.dokumentasi.index']],
 
+            'privasi' => ['Kebijakan Privasi', 'shield-check', [
+                ...static::banner('privasi', 'Kebijakan Privasi', 'Bagaimana kami menjaga data anak dan orang tua'),
+                ['group' => 'Isi kebijakan'],
+                'privasi_berlaku' => ['Berlaku sejak', 'text', null, 'Contoh: 1 November 2026. Kosongkan jika tidak ingin ditampilkan.'],
+                'privasi_isi' => ['Isi kebijakan privasi', 'textarea', "## Data yang kami kumpulkan\nData anak (nama, tanggal lahir, alamat, foto, catatan kesehatan, kehadiran, perkembangan), data orang tua (nama, pekerjaan, nomor telepon, email), serta data pembayaran sekolah.\n\n## Tujuan penggunaan\nData dipakai hanya untuk keperluan pendidikan, komunikasi dengan orang tua, administrasi pembayaran, dan keselamatan anak di sekolah.\n\n## Siapa yang dapat melihat\nData anak hanya dapat dilihat oleh orang tuanya sendiri, wali kelas, dan admin sekolah. Foto dokumentasi kelas hanya dapat dilihat oleh orang tua di kelas yang sama.\n\n## Foto di website publik\nFoto anak hanya ditampilkan di halaman website publik (galeri, kegiatan, banner) jika orang tua memberikan izin.\n\n## Penyimpanan & keamanan\nData disimpan di server sekolah, dilindungi kata sandi dan koneksi aman (HTTPS). Data tidak dijual atau dibagikan kepada pihak lain.\n\n## Hak orang tua\nOrang tua dapat meminta melihat, memperbaiki, atau menghapus data anak dan dirinya dengan menghubungi admin sekolah.", 'Baris yang diawali "## " menjadi subjudul. Kosongkan satu baris untuk paragraf baru.'],
+                'privasi_kontak' => ['Kontak permintaan data', 'text', null, 'Contoh: privasi@tkceria.sch.id. Kosong = memakai email & WhatsApp sekolah.'],
+                ['group' => 'Formulir pendaftaran'],
+                'privasi_setuju_label' => ['Teks persetujuan (wajib dicentang)', 'text', 'Saya telah membaca dan menyetujui Kebijakan Privasi sekolah.'],
+                'privasi_foto_label' => ['Teks izin foto (boleh tidak dicentang)', 'text', 'Saya mengizinkan foto anak saya ditampilkan di website publik sekolah (galeri & kegiatan).'],
+            ], ['Data pendaftar' => 'admin.pendaftaran.index']],
+
             'pembayaran' => ['Info Pembayaran', 'wallet', [
                 ['group' => 'Tampil di panel orang tua (menu Pembayaran)'],
                 'bank_nama' => ['Nama bank', 'text', 'Bank BRI'],

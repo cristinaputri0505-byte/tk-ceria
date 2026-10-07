@@ -22,24 +22,24 @@
         <div class="absolute inset-0 bg-gradient-to-r from-navy-deep/90 via-navy-deep/60 to-transparent"></div>
     @else
         {{-- Matahari di siang hari --}}
-        <svg class="ilu-siang absolute -right-6 -top-6 w-40 h-40 opacity-90" viewBox="0 0 100 100" aria-hidden="true">
+        <svg class="ilu-siang absolute -right-6 -top-6 w-24 h-24 sm:w-40 sm:h-40 opacity-60 sm:opacity-90" viewBox="0 0 100 100" aria-hidden="true">
             <g stroke="#fbbf24" stroke-width="5" stroke-linecap="round"><path d="M50 6v12M50 82v12M6 50h12M82 50h12M19 19l8 8M73 73l8 8M19 81l8-8M73 27l8-8"/></g>
             <circle cx="50" cy="50" r="22" fill="#fbbf24"/>
         </svg>
         {{-- Bulan sabit dan bintang di malam hari --}}
-        <svg class="ilu-malam absolute -right-2 -top-2 w-40 h-40" viewBox="0 0 100 100" aria-hidden="true">
+        <svg class="ilu-malam absolute -right-2 -top-2 w-24 h-24 sm:w-40 sm:h-40 opacity-60 sm:opacity-100" viewBox="0 0 100 100" aria-hidden="true">
             <defs><mask id="potong-bulan"><rect width="100" height="100" fill="#fff"/><circle cx="66" cy="38" r="29" fill="#000"/></mask></defs>
             <circle cx="46" cy="54" r="32" fill="#fde68a" mask="url(#potong-bulan)"/>
             <g fill="#fde68a"><circle cx="80" cy="74" r="2.4"/><circle cx="62" cy="88" r="1.6"/><circle cx="24" cy="18" r="1.8"/><circle cx="90" cy="48" r="1.5"/></g>
         </svg>
     @endif
-    <div class="relative">
+    <div class="relative pr-16 sm:pr-36">
         <p class="text-white/70 text-sm font-bold flex items-center gap-2">
             <svg class="i-malam w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
             <svg class="i-siang w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
             <span data-tgl-wib>{{ now()->timezone('Asia/Jakarta')->translatedFormat('l, d F Y') }}</span>
         </p>
-        <h2 class="font-display text-3xl font-semibold mt-1">{!! $salamHtml(\App\Support\Pengaturan::isi('portal_salam_judul', $kode)) !!}</h2>
+        <h2 class="font-display text-2xl sm:text-3xl font-semibold mt-1">{!! $salamHtml(\App\Support\Pengaturan::isi('portal_salam_judul', $kode)) !!}</h2>
         <p class="text-white/80 mt-1 max-w-lg">{!! $salamHtml(\App\Support\Pengaturan::isi('portal_salam_sub', $kode)) !!}</p>
     </div>
 </section>

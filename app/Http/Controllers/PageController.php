@@ -55,6 +55,11 @@ class PageController extends Controller
         return view('pages.guru', ['staff' => Staff::orderBy('urutan')->orderBy('nama')->get()]);
     }
 
+    public function privasi()
+    {
+        return view('pages.privasi');
+    }
+
     public function kontak()
     {
         return view('pages.kontak');

@@ -10,9 +10,9 @@ class Siswa extends Model
     protected $fillable = [
         'nis', 'nama', 'panggilan', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'agama', 'anak_ke', 'alamat', 'kelas_id', 'orang_tua_id', 'foto',
         'golongan_darah', 'catatan_kesehatan', 'tanggal_masuk',
-        'nama_ayah', 'pekerjaan_ayah', 'telepon_ayah', 'nama_ibu', 'pekerjaan_ibu', 'telepon_ibu',
+        'izin_foto_publik', 'nama_ayah', 'pekerjaan_ayah', 'telepon_ayah', 'nama_ibu', 'pekerjaan_ibu', 'telepon_ibu',
     ];
-    protected $casts = ['tanggal_lahir' => 'date', 'tanggal_masuk' => 'date'];
+    protected $casts = ['tanggal_lahir' => 'date', 'tanggal_masuk' => 'date', 'izin_foto_publik' => 'boolean'];
 
     public function kelas()
     {

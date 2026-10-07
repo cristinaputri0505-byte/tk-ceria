@@ -26,6 +26,18 @@
             @include('partials.field', ['name' => 'email', 'label' => 'Email (opsional)', 'type' => 'email', 'required' => false])
             @include('partials.textarea', ['name' => 'alamat', 'label' => 'Alamat rumah', 'class' => 'sm:col-span-2'])
         </fieldset>
+        <fieldset class="space-y-3 rounded-2xl bg-cloud p-4">
+            <legend class="sr-only">Persetujuan</legend>
+            <label class="flex items-start gap-3 text-sm">
+                <input type="checkbox" name="setuju_privasi" value="1" required @checked(old('setuju_privasi')) class="mt-0.5 w-4 h-4 accent-sky">
+                <span>{{ $site['privasi_setuju_label'] }} <a href="{{ route('privasi') }}" target="_blank" class="font-bold text-sky underline">Baca Kebijakan Privasi</a> <span class="text-rose-600">*</span></span>
+            </label>
+            @error('setuju_privasi')<p class="text-xs text-rose-600 -mt-1 ml-7">{{ $message }}</p>@enderror
+            <label class="flex items-start gap-3 text-sm">
+                <input type="checkbox" name="izin_foto_publik" value="1" @checked(old('izin_foto_publik')) class="mt-0.5 w-4 h-4 accent-sky">
+                <span>{{ $site['privasi_foto_label'] }} <span class="text-slate-500">(opsional)</span></span>
+            </label>
+        </fieldset>
         <button class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-sky text-white font-extrabold px-8 py-3.5 rounded-xl hover:bg-sky-dark">
             Kirim Pendaftaran <i data-lucide="send" class="w-4 h-4"></i>
         </button>

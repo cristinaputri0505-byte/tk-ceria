@@ -23,6 +23,7 @@ Route::get('/kegiatan/{kegiatan}', [PageController::class, 'kegiatanShow'])->nam
 Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
 Route::get('/guru-staff', [PageController::class, 'guru'])->name('guru');
 Route::get('/kontak', [PageController::class, 'kontak'])->name('kontak');
+Route::get('/kebijakan-privasi', [PageController::class, 'privasi'])->name('privasi');
 Route::post('/kontak', [PageController::class, 'kontakKirim'])->middleware('throttle:formulir')->name('kontak.kirim');
 Route::get('/berita', [HomeController::class, 'berita'])->name('berita.index');
 Route::get('/berita/{berita}', [HomeController::class, 'beritaShow'])->name('berita.show');

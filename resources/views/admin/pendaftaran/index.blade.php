@@ -21,6 +21,10 @@
                 <p class="text-sm mt-2"><span class="font-bold text-navy">{{ $p->nama_orang_tua }}</span> · <a href="https://wa.me/{{ preg_replace('/^0/', '62', preg_replace('/\D/', '', $p->telepon)) }}" target="_blank" class="text-leaf font-bold">{{ $p->telepon }}</a>{{ $p->email ? ' · '.$p->email : '' }}</p>
                 <p class="text-sm text-slate-500">{{ $p->alamat }}</p>
                 <p class="text-xs text-slate-400 mt-2">Masuk {{ $p->created_at->diffForHumans() }}</p>
+                <div class="flex flex-wrap gap-1.5 mt-2 text-[11px] font-bold">
+                    <span class="px-2 py-0.5 rounded-full {{ $p->setuju_privasi_pada ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500' }}">{{ $p->setuju_privasi_pada ? '✓ Setuju kebijakan privasi' : 'Belum ada persetujuan privasi' }}</span>
+                    <span class="px-2 py-0.5 rounded-full {{ $p->izin_foto_publik ? 'bg-sky-100 text-sky-700' : 'bg-amber-100 text-amber-700' }}">{{ $p->izin_foto_publik ? 'Foto boleh tampil di website' : 'Foto TIDAK boleh tampil di website' }}</span>
+                </div>
             </div>
             <form method="POST" action="{{ route('admin.pendaftaran.update', $p) }}" class="flex flex-wrap lg:flex-col gap-2 lg:w-56">
                 @csrf @method('PATCH')

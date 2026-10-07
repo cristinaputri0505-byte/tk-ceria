@@ -86,6 +86,7 @@ class SiswaController extends Controller
             'telepon_ibu' => 'nullable|string|max:20',
         ]);
         unset($data['foto']);
+        $data['izin_foto_publik'] = $request->boolean('izin_foto_publik');
 
         if ($request->hasFile('foto')) {
             if ($siswa?->foto) Storage::disk('local')->delete($siswa->foto);

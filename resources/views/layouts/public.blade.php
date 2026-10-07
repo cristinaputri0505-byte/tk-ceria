@@ -12,12 +12,12 @@
 
     {{-- NAVBAR --}}
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-100">
-        <nav class="max-w-7xl mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between gap-6">
-            <a href="{{ route('home') }}" class="flex items-center gap-3 shrink-0">
-                @include('partials.logo', ['size' => 48])
-                <span class="leading-none">
-                    <span class="block font-display text-[1.7rem] font-semibold text-navy">{{ $site['nama_sekolah'] }}</span>
-                    <span class="block text-[11px] font-bold text-navy/80 mt-0.5">{{ $site['tagline'] }}</span>
+        <nav class="max-w-7xl mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between gap-3 sm:gap-6">
+            <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3 min-w-0">
+                @include('partials.logo', ['size' => 44])
+                <span class="leading-none min-w-0">
+                    <span class="block font-display text-xl sm:text-[1.7rem] font-semibold text-navy truncate">{{ $site['nama_sekolah'] }}</span>
+                    <span class="hidden sm:block text-[11px] font-bold text-navy/80 mt-0.5 truncate">{{ $site['tagline'] }}</span>
                 </span>
             </a>
 
@@ -40,13 +40,13 @@
                 @endforeach
             </ul>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
                 @auth
-                    <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-sky-dark">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+                    <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-bold px-3 sm:px-5 py-2.5 rounded-full hover:bg-sky-dark" aria-label="Dashboard">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> <span class="hidden sm:inline">Dashboard</span>
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-sky-dark">
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-bold px-4 sm:px-6 py-2.5 rounded-full hover:bg-sky-dark">
                         <i data-lucide="user-round" class="w-4 h-4"></i> Login
                     </a>
                 @endauth
@@ -95,7 +95,7 @@
                         @endforeach
                     </div>
                 @endif
-                <p class="text-xs text-white/60 mt-6">&copy; {{ date('Y') }} {{ $site['nama_sekolah'] }}. Hak cipta dilindungi.</p>
+                <p class="text-xs text-white/60 mt-6">&copy; {{ date('Y') }} {{ $site['nama_sekolah'] }}. Hak cipta dilindungi. · <a href="{{ route('privasi') }}" class="underline hover:text-white">Kebijakan Privasi</a></p>
             </div>
         </div>
     </footer>

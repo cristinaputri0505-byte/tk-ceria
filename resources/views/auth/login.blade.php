@@ -30,12 +30,12 @@
                         </button>
                     </div>
                 </div>
-                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="remember" class="rounded accent-sky"> Ingat saya di perangkat ini</label>
+                <div class="flex items-center justify-between gap-3"><label class="flex items-center gap-2 text-sm"><input type="checkbox" name="remember" class="rounded accent-sky"> Ingat saya di perangkat ini</label><a href="{{ Route::has('lupa.form') ? route('lupa.form') : url('lupa-password') }}" class="text-sm font-bold text-sky hover:underline">Lupa kata sandi?</a></div>
                 <button class="w-full bg-sky text-white font-extrabold py-3 rounded-xl hover:bg-sky-dark">Masuk</button>
             </form>
             <p class="text-xs text-slate-500 mt-5 text-center whitespace-pre-line">{{ $site['login_bantuan'] }} Hubungi sekolah di {{ $site['whatsapp'] ?: $site['telepon'] }}.</p>
         </div>
-        <p class="text-center mt-5"><a href="{{ route('home') }}" class="text-sm font-bold text-navy hover:text-sky">Kembali ke beranda</a></p>
+        <p class="text-center mt-5 text-sm"><a href="{{ route('home') }}" class="font-bold text-navy hover:text-sky">Kembali ke beranda</a> · <a href="{{ route('privasi') }}" class="font-bold text-navy hover:text-sky">Kebijakan Privasi</a></p>
     </main>
     <script>lucide.createIcons();</script>
 </body>

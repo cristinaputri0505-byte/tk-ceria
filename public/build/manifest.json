@@ -1,0 +1,63 @@
+{
+  "node_modules/@fontsource/fredoka/files/fredoka-latin-500-normal.woff": {
+    "file": "assets/fredoka-latin-500-normal-BL692wg7.woff",
+    "src": "node_modules/@fontsource/fredoka/files/fredoka-latin-500-normal.woff"
+  },
+  "node_modules/@fontsource/fredoka/files/fredoka-latin-500-normal.woff2": {
+    "file": "assets/fredoka-latin-500-normal-B0JifZgm.woff2",
+    "src": "node_modules/@fontsource/fredoka/files/fredoka-latin-500-normal.woff2"
+  },
+  "node_modules/@fontsource/fredoka/files/fredoka-latin-600-normal.woff": {
+    "file": "assets/fredoka-latin-600-normal-CcrEjrB4.woff",
+    "src": "node_modules/@fontsource/fredoka/files/fredoka-latin-600-normal.woff"
+  },
+  "node_modules/@fontsource/fredoka/files/fredoka-latin-600-normal.woff2": {
+    "file": "assets/fredoka-latin-600-normal-C4zohCW5.woff2",
+    "src": "node_modules/@fontsource/fredoka/files/fredoka-latin-600-normal.woff2"
+  },
+  "node_modules/@fontsource/fredoka/files/fredoka-latin-700-normal.woff": {
+    "file": "assets/fredoka-latin-700-normal-C8FeHd3X.woff",
+    "src": "node_modules/@fontsource/fredoka/files/fredoka-latin-700-normal.woff"
+  },
+  "node_modules/@fontsource/fredoka/files/fredoka-latin-700-normal.woff2": {
+    "file": "assets/fredoka-latin-700-normal-BOIZVyIN.woff2",
+    "src": "node_modules/@fontsource/fredoka/files/fredoka-latin-700-normal.woff2"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-400-normal.woff": {
+    "file": "assets/nunito-latin-400-normal-DKg4f3fz.woff",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-400-normal.woff2": {
+    "file": "assets/nunito-latin-400-normal-r8SDr6Up.woff2",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-600-normal.woff": {
+    "file": "assets/nunito-latin-600-normal-Cd0eNu1l.woff",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-600-normal.woff"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-600-normal.woff2": {
+    "file": "assets/nunito-latin-600-normal-Br8yIETf.woff2",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-600-normal.woff2"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-700-normal.woff": {
+    "file": "assets/nunito-latin-700-normal-OcDqTBcA.woff",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-700-normal.woff"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-700-normal.woff2": {
+    "file": "assets/nunito-latin-700-normal-Dort48En.woff2",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-700-normal.woff2"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-800-normal.woff": {
+    "file": "assets/nunito-latin-800-normal-D-J0wlBY.woff",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-800-normal.woff"
+  },
+  "node_modules/@fontsource/nunito/files/nunito-latin-800-normal.woff2": {
+    "file": "assets/nunito-latin-800-normal-Dz8SOQK_.woff2",
+    "src": "node_modules/@fontsource/nunito/files/nunito-latin-800-normal.woff2"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-GYYHwp7P.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  }
+}

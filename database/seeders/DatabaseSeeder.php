@@ -18,6 +18,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Data contoh memakai password "password" yang tertulis di README. Jangan pernah masuk ke server.
+        if (app()->isProduction()) {
+            $this->command?->error('Seeder data contoh DIBATALKAN: aplikasi berjalan di mode produksi. Buat admin dengan: php artisan tk:buat-admin');
+            return;
+        }
+
         // ---- Akun demo (kata sandi semua: password) ----
         User::create(['name' => 'Admin TK Ceria', 'email' => 'admin@tkceria.sch.id', 'password' => 'password', 'role' => 'admin', 'jabatan' => 'Kepala Sekolah']);
 

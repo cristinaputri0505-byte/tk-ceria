@@ -1,8 +1,23 @@
 <?php
 
+use App\Http\Controllers\Admin\ResetPasswordController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\LupaPasswordController;
 use App\Http\Controllers\NotifikasiController;
 use Illuminate\Support\Facades\Route;
+
+/* Lupa password (tamu): mengirim permintaan ke admin */
+Route::middleware('guest')->group(function () {
+    Route::get('lupa-password', [LupaPasswordController::class, 'form'])->name('lupa.form');
+    Route::post('lupa-password', [LupaPasswordController::class, 'kirim'])->middleware('throttle:5,1')->name('lupa.kirim');
+});
+
+/* Admin: memproses permintaan reset password */
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('reset-password', [ResetPasswordController::class, 'index'])->name('reset.index');
+    Route::post('reset-password/{permintaan}/rilis', [ResetPasswordController::class, 'rilis'])->name('reset.rilis');
+    Route::post('reset-password/{permintaan}/tolak', [ResetPasswordController::class, 'tolak'])->name('reset.tolak');
+});
 
 /* Notifikasi: semua peran yang sudah login */
 Route::middleware('auth')->prefix('notifikasi')->name('notifikasi.')->group(function () {

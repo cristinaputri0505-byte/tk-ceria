@@ -17,6 +17,7 @@ class Notifikasi extends Model
         'pembayaran' => ['Pembayaran', 'wallet'],
         'pengumuman' => ['Pengumuman', 'megaphone'],
         'chat' => ['Chat', 'message-circle'],
+        'akun' => ['Akun', 'lock-keyhole'],
     ];
 
     /** Kirim notifikasi ke banyak user. Notifikasi chat yang belum dibaca digabung agar tidak membanjiri. */

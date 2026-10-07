@@ -18,6 +18,10 @@
         @include('partials.field', ['name' => 'anak_ke', 'label' => 'Anak ke', 'type' => 'number', 'value' => $siswa->anak_ke, 'required' => false, 'attrs' => 'min=1'])
         @include('partials.field', ['name' => 'tanggal_masuk', 'label' => 'Tanggal masuk', 'type' => 'date', 'value' => $siswa->tanggal_masuk?->format('Y-m-d'), 'required' => false])
         @include('partials.textarea', ['name' => 'alamat', 'label' => 'Alamat', 'value' => $siswa->alamat, 'required' => false, 'rows' => 2, 'class' => 'sm:col-span-2 lg:col-span-3'])
+        <label class="sm:col-span-2 lg:col-span-3 flex items-start gap-3 rounded-2xl bg-cloud p-4 text-sm">
+            <input type="checkbox" name="izin_foto_publik" value="1" @checked(old('izin_foto_publik', $siswa->izin_foto_publik)) class="mt-0.5 w-4 h-4 accent-sky">
+            <span><b class="text-navy">Orang tua mengizinkan foto anak tampil di website publik</b><br><span class="text-slate-500">Jika tidak dicentang, jangan pasang foto anak ini di Galeri, Kegiatan, atau banner website.</span></span>
+        </label>
         @include('partials.file', ['name' => 'foto', 'label' => 'Foto anak', 'current' => $siswa->foto, 'currentUrl' => $siswa->foto_url, 'class' => 'sm:col-span-2 lg:col-span-3'])
     </fieldset>
 

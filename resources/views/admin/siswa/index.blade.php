@@ -21,7 +21,7 @@
     @forelse ($siswa as $s)
         <tr>
             <td class="px-5 py-3 text-slate-500">{{ $s->nis }}</td>
-            <td class="px-5 py-3"><div class="flex items-center gap-3">@include('partials.foto-anak', ['s' => $s, 'size' => 'w-10 h-10 !rounded-xl !border-0 !shadow-none', 'teks' => 'text-base'])<span class="font-bold text-navy">{{ $s->nama }} <span class="text-xs font-normal text-slate-400">({{ $s->jenis_kelamin }})</span></span></div></td>
+            <td class="px-5 py-3"><div class="flex items-center gap-3">@include('partials.foto-anak', ['s' => $s, 'size' => 'w-10 h-10 !rounded-xl !border-0 !shadow-none', 'teks' => 'text-base'])<span class="font-bold text-navy">{{ $s->nama }} <span class="text-xs font-normal text-slate-400">({{ $s->jenis_kelamin }})</span>@unless ($s->izin_foto_publik)<i data-lucide="camera-off" class="inline w-3.5 h-3.5 text-amber-600 ml-1 -mt-0.5" title="Foto tidak boleh tampil di website publik"></i>@endunless</span></div></td>
             <td class="px-5 py-3">{{ $s->usia }}</td>
             <td class="px-5 py-3">{{ $s->kelas->nama ?? '—' }}</td>
             <td class="px-5 py-3">{{ $s->orangTua->name ?? '—' }}</td>
