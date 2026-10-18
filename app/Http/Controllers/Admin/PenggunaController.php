@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 /**
@@ -60,7 +60,7 @@ class PenggunaController extends Controller
         if ($pengguna->is($request->user())) {
             return back()->with('error', 'Anda tidak dapat menghapus akun yang sedang dipakai.');
         }
-        if ($pengguna->foto) Storage::disk('public')->delete($pengguna->foto);
+        Unggah::hapus($pengguna->foto, 'public');
         $pengguna->delete();
         return back()->with('success', 'Akun dihapus.');
     }
@@ -80,8 +80,8 @@ class PenggunaController extends Controller
         if (empty($data['password'])) unset($data['password']);
 
         if ($request->hasFile('foto')) {
-            if ($user?->foto) Storage::disk('public')->delete($user->foto);
-            $data['foto'] = $request->file('foto')->store('pengguna', 'public');
+            $data['foto'] = Unggah::simpan($request->file('foto'), 'pengguna', 'public', 'foto');
+            Unggah::hapus($user?->foto, 'public');
         }
 
         return $data;

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class KegiatanController extends Controller
 {
@@ -38,7 +38,7 @@ class KegiatanController extends Controller
 
     public function destroy(Kegiatan $kegiatan)
     {
-        if ($kegiatan->gambar) Storage::disk('public')->delete($kegiatan->gambar);
+        Unggah::hapus($kegiatan->gambar, 'public');
         $kegiatan->delete();
         return back()->with('success', 'Kegiatan dihapus.');
     }
@@ -53,8 +53,8 @@ class KegiatanController extends Controller
         ]);
 
         if ($request->hasFile('gambar')) {
-            if ($kegiatan?->gambar) Storage::disk('public')->delete($kegiatan->gambar);
-            $data['gambar'] = $request->file('gambar')->store('kegiatan', 'public');
+            $data['gambar'] = Unggah::simpan($request->file('gambar'), 'kegiatan', 'public', 'gambar');
+            Unggah::hapus($kegiatan?->gambar, 'public');
         }
 
         return $data;

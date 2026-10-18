@@ -259,4 +259,41 @@ class PerbaikanTest extends TestCase
         $this->actingAs($this->u('admin@tkceria.sch.id'))->get(route('admin.pengguna.index', ['role' => 'guru']))
             ->assertOk()->assertSee($rina->foto_url, false);
     }
+
+    public function test_penyimpanan_menolak_unggahan_tampil_pesan_bukan_error_500(): void
+    {
+        // Disk yang menolak menulis: folder 'siswa' & 'pengguna' sengaja berupa file, bukan folder.
+        $root = sys_get_temp_dir() . '/tk-tolak-' . uniqid();
+        mkdir($root);
+        touch($root . '/siswa');
+        touch($root . '/pengguna');
+        foreach (['local', 'public'] as $disk) {
+            Storage::set($disk, Storage::build(['driver' => 'local', 'root' => $root, 'throw' => true]));
+        }
+
+        $admin = $this->u('admin@tkceria.sch.id');
+        $siswa = Siswa::firstOrFail();
+        $data = ['nis' => $siswa->nis, 'nama' => $siswa->nama, 'jenis_kelamin' => $siswa->jenis_kelamin,
+            'tanggal_lahir' => $siswa->tanggal_lahir->toDateString(), 'foto' => UploadedFile::fake()->image('a.jpg')];
+
+        $this->actingAs($admin)->from(route('admin.siswa.edit', $siswa))
+            ->put(route('admin.siswa.update', $siswa), $data)
+            ->assertRedirect(route('admin.siswa.edit', $siswa))
+            ->assertSessionHasErrors('foto');
+        $this->assertSame($siswa->foto, $siswa->fresh()->foto);
+
+        $budi = $this->u('budi@contoh.com');
+        $this->actingAs($budi)->from(route('orangtua.profil'))
+            ->put(route('orangtua.profil.update'), ['name' => $budi->name, 'foto' => UploadedFile::fake()->image('b.jpg')])
+            ->assertSessionHasErrors('foto');
+    }
+
+    public function test_halaman_cek_penyimpanan_hanya_admin_dan_menampilkan_hasil(): void
+    {
+        Storage::fake('local');
+        Storage::fake('public');
+        $this->actingAs($this->u('budi@contoh.com'))->get(route('admin.cek-penyimpanan'))->assertForbidden();
+        $this->actingAs($this->u('admin@tkceria.sch.id'))->get(route('admin.cek-penyimpanan'))
+            ->assertOk()->assertSee('Penyimpanan berjalan normal');
+    }
 }

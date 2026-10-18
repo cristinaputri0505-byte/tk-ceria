@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Models\Program;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Support\Pengaturan;
 
@@ -42,7 +42,7 @@ class ProgramController extends Controller
 
     public function destroy(Program $program)
     {
-        if ($program->gambar) Storage::disk('public')->delete($program->gambar);
+        Unggah::hapus($program->gambar, 'public');
         $program->delete();
         return back()->with('success', 'Program dihapus.');
     }
@@ -62,10 +62,10 @@ class ProgramController extends Controller
 
         unset($data['gambar']);
         if ($request->hasFile('gambar')) {
-            if ($program?->gambar) Storage::disk('public')->delete($program->gambar);
-            $data['gambar'] = $request->file('gambar')->store('program', 'public');
+            $data['gambar'] = Unggah::simpan($request->file('gambar'), 'program', 'public', 'gambar');
+            Unggah::hapus($program?->gambar, 'public');
         } elseif ($program && $request->boolean('hapus_gambar') && $program->gambar) {
-            Storage::disk('public')->delete($program->gambar);
+            Unggah::hapus($program->gambar, 'public');
             $data['gambar'] = null;
         }
 

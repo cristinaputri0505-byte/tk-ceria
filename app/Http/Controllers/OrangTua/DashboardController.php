@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\OrangTua;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Guru\PerkembanganController;
 use App\Models\Dokumentasi;
@@ -13,7 +14,6 @@ use App\Support\Pengaturan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
 class DashboardController extends Controller
@@ -121,13 +121,14 @@ class DashboardController extends Controller
             'catatan' => 'nullable|string|max:255',
         ], [], ['bukti' => 'bukti transfer']);
 
-        if ($tagihan->bukti) Storage::disk('local')->delete($tagihan->bukti);
-
+        $lama = $tagihan->bukti;
         $tagihan->update([
-            'bukti' => $request->file('bukti')->store('bukti-bayar', 'local'),
+            'bukti' => Unggah::simpan($request->file('bukti'), 'bukti-bayar', 'local', 'bukti'),
             'status' => 'menunggu',
             'catatan' => $request->catatan,
         ]);
+
+        Unggah::hapus($lama, 'local');
 
         return back()->with('success', "Bukti pembayaran {$tagihan->jenis} {$tagihan->periode} terkirim. Admin akan memverifikasi dalam 1×24 jam kerja.");
     }
@@ -175,8 +176,9 @@ class DashboardController extends Controller
         $user->name = $data['name'];
         $user->telepon = $data['telepon'] ?? null;
         if ($request->hasFile('foto')) {
-            if ($user->foto) Storage::disk('public')->delete($user->foto);
-            $user->foto = $request->file('foto')->store('pengguna', 'public');
+            $baru = Unggah::simpan($request->file('foto'), 'pengguna', 'public', 'foto');
+            Unggah::hapus($user->foto, 'public');
+            $user->foto = $baru;
         }
         if (! empty($data['password'])) $user->password = Hash::make($data['password']);
         $user->save();

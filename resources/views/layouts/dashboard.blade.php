@@ -37,6 +37,7 @@
             ['Guru & Staff', 'admin.staff.index', 'users', 'admin.staff.*'],
             ['Berita', 'admin.berita.index', 'newspaper', 'admin.berita.*'],
             ['Pesan Masuk', 'admin.pesan.index', 'inbox', 'admin.pesan.*'],
+            ['Cek Penyimpanan', 'admin.cek-penyimpanan', 'database', 'admin.cek-penyimpanan'],
         ],
         'guru' => [
             ['Ringkasan', 'guru.dashboard', 'layout-dashboard', 'guru.dashboard'],

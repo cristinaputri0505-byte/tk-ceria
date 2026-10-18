@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\Siswa;
@@ -9,7 +10,6 @@ use App\Models\Tagihan;
 use App\Support\Pengaturan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class TagihanController extends Controller
@@ -110,7 +110,7 @@ class TagihanController extends Controller
 
     public function destroy(Tagihan $tagihan)
     {
-        if ($tagihan->bukti) Storage::disk('local')->delete($tagihan->bukti);
+        Unggah::hapus($tagihan->bukti, 'local');
         $tagihan->delete();
         return back()->with('success', 'Tagihan dihapus.');
     }

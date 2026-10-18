@@ -78,6 +78,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('pesan/{pesan}', [Admin\PesanController::class, 'destroy'])->name('pesan.destroy');
     Route::get('pengaturan', [Admin\PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('pengaturan/{tab}', [Admin\PengaturanController::class, 'update'])->name('pengaturan.update');
+    Route::get('cek-penyimpanan', [Admin\PengaturanController::class, 'cekPenyimpanan'])->name('cek-penyimpanan');
 });
 
 /*

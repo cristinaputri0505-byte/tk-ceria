@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * CRUD generik untuk konten website berbentuk kartu (keunggulan, galeri, guru & staff).
@@ -74,7 +74,7 @@ abstract class KontenController extends Controller
     {
         $item = $this->model::findOrFail($id);
         foreach ($this->fields() as $key => $f) {
-            if ($f[1] === 'image' && $item->$key) Storage::disk('public')->delete($item->$key);
+            if ($f[1] === 'image') Unggah::hapus($item->$key, 'public');
         }
         $item->delete();
         return back()->with('success', ucfirst($this->satuan) . ' dihapus.');
@@ -98,10 +98,10 @@ abstract class KontenController extends Controller
             if ($f[1] !== 'image') continue;
             unset($data[$key]);
             if ($request->hasFile($key)) {
-                if ($item?->$key) Storage::disk('public')->delete($item->$key);
-                $data[$key] = $request->file($key)->store($this->folder, 'public');
+                $data[$key] = Unggah::simpan($request->file($key), $this->folder, 'public', $key);
+                Unggah::hapus($item?->$key, 'public');
             } elseif ($item && $request->boolean("hapus_$key") && ! ($f[3]['wajib_baru'] ?? false)) {
-                if ($item->$key) Storage::disk('public')->delete($item->$key);
+                Unggah::hapus($item->$key, 'public');
                 $data[$key] = null;
             }
         }

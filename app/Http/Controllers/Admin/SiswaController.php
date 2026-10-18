@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Models\Dokumentasi;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class SiswaController extends Controller
@@ -53,7 +53,7 @@ class SiswaController extends Controller
             ->merge($siswa->tagihan()->whereNotNull('bukti')->pluck('bukti'))
             ->merge(Dokumentasi::where('siswa_id', $siswa->id)->pluck('gambar'))
             ->filter()->values()->all();
-        if ($file) Storage::disk('local')->delete($file);
+        Unggah::hapus($file, 'local');
         $siswa->delete();
         return back()->with('success', 'Data siswa dihapus.');
     }
@@ -96,8 +96,8 @@ class SiswaController extends Controller
         $data['izin_foto_publik'] = $request->boolean('izin_foto_publik');
 
         if ($request->hasFile('foto')) {
-            if ($siswa?->foto) Storage::disk('local')->delete($siswa->foto);
-            $data['foto'] = $request->file('foto')->store('siswa', 'local');
+            $data['foto'] = Unggah::simpan($request->file('foto'), 'siswa', 'local', 'foto');
+            Unggah::hapus($siswa?->foto, 'local');
         }
 
         return $data;

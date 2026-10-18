@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Models\Berita;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class BeritaController extends Controller
 {
@@ -38,7 +38,7 @@ class BeritaController extends Controller
 
     public function destroy(Berita $berita)
     {
-        if ($berita->gambar) Storage::disk('public')->delete($berita->gambar);
+        Unggah::hapus($berita->gambar, 'public');
         $berita->delete();
         return back()->with('success', 'Berita dihapus.');
     }
@@ -57,8 +57,8 @@ class BeritaController extends Controller
         unset($data['terbitkan']);
 
         if ($request->hasFile('gambar')) {
-            if ($berita?->gambar) Storage::disk('public')->delete($berita->gambar);
-            $data['gambar'] = $request->file('gambar')->store('berita', 'public');
+            $data['gambar'] = Unggah::simpan($request->file('gambar'), 'berita', 'public', 'gambar');
+            Unggah::hapus($berita?->gambar, 'public');
         }
 
         return $data;

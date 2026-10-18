@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Models\Galeri;
 use Illuminate\Http\Request;
 
@@ -43,7 +44,7 @@ class GaleriController extends KontenController
 
         foreach ($request->file('gambar') as $i => $file) {
             Galeri::create([
-                'gambar' => $file->store($this->folder, 'public'),
+                'gambar' => Unggah::simpan($file, $this->folder, 'public', 'gambar'),
                 'judul' => $data['judul'] ?? null,
                 'album' => $data['album'] ?? null,
                 'urutan' => $data['urutan'] + $i,

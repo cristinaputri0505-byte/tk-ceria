@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Guru;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
 use App\Models\Dokumentasi;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class DokumentasiController extends Controller
 {
@@ -42,7 +42,7 @@ class DokumentasiController extends Controller
                 'kelas_id' => $kelas->id,
                 'siswa_id' => $data['siswa_id'] ?? null,
                 'guru_id' => $request->user()->id,
-                'gambar' => $file->store('dokumentasi', 'local'),
+                'gambar' => Unggah::simpan($file, 'dokumentasi', 'local', 'gambar'),
                 'keterangan' => $data['keterangan'] ?? null,
                 'tanggal' => $data['tanggal'],
             ]);
@@ -55,7 +55,7 @@ class DokumentasiController extends Controller
     public function destroy(Request $request, Dokumentasi $dokumentasi)
     {
         abort_unless($request->user()->role === 'admin' || (int) $dokumentasi->kelas->wali_guru_id === $request->user()->id, 403);
-        Storage::disk('local')->delete($dokumentasi->gambar);
+        Unggah::hapus($dokumentasi->gambar, 'local');
         $dokumentasi->delete();
         return back()->with('success', 'Foto dihapus.');
     }

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\Unggah;
 use App\Http\Controllers\Controller;
+use App\Support\CekPenyimpanan;
 use App\Support\Pengaturan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PengaturanController extends Controller
 {
@@ -44,10 +45,10 @@ class PengaturanController extends Controller
             if ($tipe === 'image') {
                 $lama = Pengaturan::mentah($key);
                 if ($request->hasFile($key)) {
-                    if ($lama) Storage::disk('public')->delete($lama);
-                    $simpan[$key] = $request->file($key)->store('website', 'public');
+                    $simpan[$key] = Unggah::simpan($request->file($key), 'website', 'public', $key);
+                    Unggah::hapus($lama, 'public');
                 } elseif ($request->boolean("hapus_$key") && $lama) {
-                    Storage::disk('public')->delete($lama);
+                    Unggah::hapus($lama, 'public');
                     $simpan[$key] = null;
                 }
                 continue;
@@ -59,5 +60,11 @@ class PengaturanController extends Controller
 
         return redirect()->route('admin.pengaturan.index', ['tab' => $tab])
             ->with('success', 'Perubahan tersimpan dan sudah tampil di website.');
+    }
+
+    /** Admin → Cek Penyimpanan: memeriksa Supabase Storage dari server yang sedang berjalan. */
+    public function cekPenyimpanan()
+    {
+        return view('admin.cek-penyimpanan', ['hasil' => CekPenyimpanan::jalankan()]);
     }
 }
