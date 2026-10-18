@@ -126,7 +126,7 @@
         <button type="button" onclick="toggleSidebar(false)" class="lg:hidden absolute right-4 top-6 p-1.5 rounded-xl text-white/80 hover:bg-white/10" aria-label="Tutup menu"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
         {{-- Kartu akun + tombol Keluar (HP) --}}
         <div class="lg:hidden mx-4 mt-4 p-3 rounded-2xl bg-white/[.07] flex items-center gap-3">
-            <span class="w-11 h-11 shrink-0 rounded-full bg-sun text-navy font-display text-lg grid place-items-center">{{ $user->inisial }}</span>
+            @include('partials.avatar', ['u' => $user, 'kelas' => 'w-11 h-11 shrink-0 rounded-full bg-sun text-navy font-display text-lg grid place-items-center'])
             <span class="min-w-0 flex-1">
                 <span class="block text-sm font-bold truncate">{{ $user->name }}</span>
                 <span class="block text-xs text-white/60 truncate">{{ $user->email }}</span>
@@ -191,8 +191,8 @@
                     <i data-lucide="bell" class="w-5 h-5"></i>
                     <span id="badge-notif" style="{{ $notifBelum ? '' : 'display:none' }}" class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-[10px] font-extrabold bg-berry text-white rounded-full grid place-items-center">{{ $notifBelum > 99 ? '99+' : $notifBelum }}</span>
                 </a>
-                <span class="hidden sm:grid w-10 h-10 rounded-full bg-sky-soft text-sky font-display text-lg place-items-center" title="{{ $user->name }}">{{ $user->inisial }}</span>
-                <button type="button" onclick="toggleSidebar(true)" class="sm:hidden w-9 h-9 rounded-full bg-sky-soft text-sky font-display text-base grid place-items-center" aria-label="Akun & menu">{{ $user->inisial }}</button>
+                @include('partials.avatar', ['u' => $user, 'kelas' => 'hidden sm:grid w-10 h-10 rounded-full bg-sky-soft text-sky font-display text-lg place-items-center'])
+                @include('partials.avatar', ['u' => $user, 'tag' => 'button', 'atribut' => 'type="button" onclick="toggleSidebar(true)" aria-label="Akun &amp; menu"', 'kelas' => 'sm:hidden w-9 h-9 rounded-full bg-sky-soft text-sky font-display text-base grid place-items-center'])
             </div>
         </header>
         @if (session('admin_asli'))

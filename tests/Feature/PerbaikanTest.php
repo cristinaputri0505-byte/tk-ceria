@@ -202,4 +202,50 @@ class PerbaikanTest extends TestCase
         Notifikasi::kirim($ortu, 'chat', 'Grup', 'pesan 3', $url);
         $this->assertSame($ortu->count() + 1, Notifikasi::where('kategori', 'chat')->where('url', $url)->count());
     }
+
+    public function test_foto_anak_terkirim_utuh_dengan_jenis_dan_ukuran_benar(): void
+    {
+        Storage::fake('local');
+        $budi = $this->u('budi@contoh.com');
+        $anak = $budi->anak()->firstOrFail();
+        $file = UploadedFile::fake()->image('anak.jpg', 300, 300);
+        $isi = file_get_contents($file->getRealPath());
+        $anak->update(['foto' => $file->store('siswa', 'local')]);
+
+        $res = $this->actingAs($budi)->get($anak->fresh()->foto_url)->assertOk();
+
+        $this->assertSame('image/jpeg', $res->headers->get('Content-Type'));
+        $this->assertSame((string) strlen($isi), $res->headers->get('Content-Length'));
+        $this->assertSame($isi, $res->getContent());
+    }
+
+    public function test_foto_anak_yang_filenya_hilang_404_dan_tampilan_memakai_huruf_awal(): void
+    {
+        Storage::fake('local');
+        $budi = $this->u('budi@contoh.com');
+        $anak = $budi->anak()->firstOrFail();
+        $anak->update(['foto' => 'siswa/tidak-ada.jpg']);
+
+        $this->actingAs($budi)->get($anak->fresh()->foto_url)->assertNotFound();
+
+        // Gambar punya cadangan huruf awal yang muncul otomatis bila gambar gagal dimuat.
+        $this->actingAs($budi)->get(route('orangtua.anak', $anak))
+            ->assertOk()
+            ->assertSee("this.style.display='none';this.nextElementSibling.style.display=''", false)
+            ->assertSee('style="display:none" aria-hidden="true">' . mb_substr($anak->nama, 0, 1), false);
+    }
+
+    public function test_foto_profil_pengguna_tampil_di_header_panel(): void
+    {
+        Storage::fake('public');
+        $budi = $this->u('budi@contoh.com');
+
+        $this->actingAs($budi)->put(route('orangtua.profil.update'), [
+            'name' => $budi->name, 'foto' => UploadedFile::fake()->image('saya.jpg'),
+        ])->assertRedirect();
+
+        $budi->refresh();
+        $this->assertNotNull($budi->foto);
+        $this->actingAs($budi)->get(route('orangtua.dashboard'))->assertOk()->assertSee($budi->foto_url, false);
+    }
 }

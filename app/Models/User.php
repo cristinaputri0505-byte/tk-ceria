@@ -44,6 +44,12 @@ class User extends Authenticatable
         };
     }
 
+    /** URL foto profil (disimpan di disk publik), atau null bila belum diunggah. */
+    public function getFotoUrlAttribute(): ?string
+    {
+        return $this->foto ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->foto) : null;
+    }
+
     public function getInisialAttribute(): string
     {
         $kata = array_values(array_diff(explode(' ', $this->name), ['Bu', 'Ibu', 'Pak', 'Bapak']));
