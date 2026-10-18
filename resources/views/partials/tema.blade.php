@@ -33,22 +33,33 @@
         try { localStorage.setItem(KUNCI, JSON.stringify({ mode: gelap ? 'gelap' : 'terang', fase: w.fase })); } catch (e) {}
     };
 
+    var jam = [];
+    function segarkanJam() {
+        var j = fWaktu.format(new Date()).replace(/\./g, ':') + ' WIB';
+        for (var i = 0; i < jam.length; i++) jam[i].textContent = j;
+    }
+
     window.tkSegarkanTeks = function () {
         var n = new Date(), w = waktu();
         document.querySelectorAll('[data-salam]').forEach(function (e) { e.textContent = w.salam; });
         document.querySelectorAll('[data-tgl-wib],[data-tgl]').forEach(function (e) { e.textContent = fTgl.format(n); });
-        var j = fWaktu.format(n).replace(/\./g, ':') + ' WIB';
-        document.querySelectorAll('[data-jam]').forEach(function (e) { e.textContent = j; });
+        jam = document.querySelectorAll('[data-jam]');
+        segarkanJam();
     };
 
     try { localStorage.removeItem('tema'); } catch (e) {}   // kunci lama
     tkTerapkanTema();
-    setInterval(function () { tkTerapkanTema(); tkSegarkanTeks(); }, 1000);
     window.addEventListener('storage', tkTerapkanTema);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        tkSegarkanTeks();
+        // Jam berdetik tiap detik (hanya jika jamnya ada di halaman). Tema, salam, dan tanggal
+        // cukup diperiksa tiap 30 detik, tidak perlu memindai seluruh halaman setiap detik.
+        if (jam.length) setInterval(function () { if (!document.hidden) segarkanJam(); }, 1000);
+        setInterval(function () { tkTerapkanTema(); tkSegarkanTeks(); }, 30000);
+        document.addEventListener('visibilitychange', function () { if (!document.hidden) { tkTerapkanTema(); tkSegarkanTeks(); } });
+    });
 })();
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () { tkSegarkanTeks(); });
 </script>
 <style>
     /* Ikon sesuai waktu: bulan di malam hari, matahari di siang hari */

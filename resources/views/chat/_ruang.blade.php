@@ -18,9 +18,10 @@
     const DATA = @json($dataUrl), KIRIM = @json($kirimUrl), ORTU = @json($ortuId ?? null), NAMA = @json($tampilNama), CSRF = @json(csrf_token());
     const isi = document.getElementById('chat-isi'), kosong = document.getElementById('chat-kosong');
     const form = document.getElementById('chat-form'), input = document.getElementById('chat-input'), tombol = document.getElementById('chat-kirim');
-    let terakhir = 0, tglTerakhir = null, pertama = true, sibuk = false;
+    let terakhir = 0, tglTerakhir = null, pertama = true, sibuk = false, antrean = Promise.resolve();
 
     function tambah(m) {
+        if (m.id <= terakhir) return; // sudah tampil
         if (m.tgl_key !== tglTerakhir) {
             tglTerakhir = m.tgl_key;
             const d = document.createElement('div');
@@ -51,8 +52,14 @@
         terakhir = Math.max(terakhir, m.id);
     }
 
-    async function ambil() {
-        if (sibuk) return;
+    // Permintaan dijalankan berurutan. Dulu, bila pesan dikirim saat pengecekan berkala sedang berjalan,
+    // ambil() langsung berhenti sehingga pesan sendiri baru muncul beberapa detik kemudian.
+    function ambil() {
+        antrean = antrean.then(ambilSekali, ambilSekali);
+        return antrean;
+    }
+
+    async function ambilSekali() {
         sibuk = true;
         try {
             const u = new URL(DATA, location.origin);
@@ -96,8 +103,8 @@
     input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 128) + 'px'; });
 
     ambil();
-    setInterval(() => { if (!document.hidden) ambil(); }, 4000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) ambil(); });
+    setInterval(() => { if (!document.hidden && !sibuk) ambil(); }, 4000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && !sibuk) ambil(); });
 })();
 </script>
 @endpush

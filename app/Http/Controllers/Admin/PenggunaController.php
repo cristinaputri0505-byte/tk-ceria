@@ -47,6 +47,10 @@ class PenggunaController extends Controller
 
     public function update(Request $request, User $pengguna)
     {
+        // Mengganti peran akun sendiri membuat admin terkunci dari panel admin.
+        if ($pengguna->is($request->user()) && $request->input('role') !== $pengguna->role) {
+            return back()->withInput()->withErrors(['role' => 'Anda tidak dapat mengubah peran akun yang sedang dipakai.']);
+        }
         $pengguna->update($this->validated($request, $pengguna));
         return redirect()->route('admin.pengguna.index', ['role' => $pengguna->role])->with('success', 'Akun diperbarui.');
     }

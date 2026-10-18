@@ -20,3 +20,8 @@ public/storage
 backup-sebelum-update
 push-github.ps1
 *.zip
+# Hanya dipakai saat npm run build di laptop, tidak dibutuhkan server
+scripts
+resources/ikon
+resources/css
+*.md

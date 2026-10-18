@@ -34,6 +34,7 @@ class AbsensiController extends Controller
             'status' => 'required|array',
             'status.*' => ['required', Rule::in(array_keys(Absensi::STATUS))],
             'keterangan' => 'nullable|array',
+            'keterangan.*' => 'nullable|string|max:255',
         ]);
 
         $kelas = Kelas::findOrFail($data['kelas_id']);
@@ -69,7 +70,7 @@ class AbsensiController extends Controller
     private function kelasUntuk(Request $request)
     {
         return $request->user()->role === 'admin'
-            ? Kelas::orderBy('nama')->get()
+            ? Kelas::with('wali')->orderBy('nama')->get()
             : $request->user()->kelasDiampu()->orderBy('nama')->get();
     }
 

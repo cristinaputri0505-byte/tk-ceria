@@ -1,8 +1,3 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
-
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Perintah artisan khusus TK Ceria ada di app/Console/Commands (tk:buat-admin, tk:cek-produksi, tk:pindah-file-ke-supabase).

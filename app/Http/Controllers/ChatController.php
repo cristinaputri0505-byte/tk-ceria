@@ -44,6 +44,10 @@ class ChatController extends Controller
 
         $data = $this->ambil(ChatPesan::with('pengirim')->where('jenis', 'pribadi')->where('orang_tua_id', $ortu->id), $request);
 
+        // Halaman chat menanyakan pesan baru tiap beberapa detik. Kalau tidak ada yang baru,
+        // tidak ada yang perlu ditandai dibaca: lewati query UPDATE agar database tidak terbebani.
+        if ($data->isEmpty() && $this->hanyaCekBaru($request)) return response()->json([]);
+
         // Tandai pesan dari pihak lawan sebagai sudah dibaca
         $belum = ChatPesan::where('jenis', 'pribadi')->where('orang_tua_id', $ortu->id)->where('dibaca', false);
         if ($user->role === User::ORANG_TUA) {
@@ -86,6 +90,7 @@ class ChatController extends Controller
     {
         $user = $request->user();
         $data = $this->ambil(ChatPesan::with('pengirim')->where('jenis', 'grup'), $request);
+        if ($data->isEmpty() && $this->hanyaCekBaru($request)) return response()->json([]);
 
         DB::table('chat_grup_baca')->updateOrInsert(['user_id' => $user->id], ['terakhir_id' => (int) ChatPesan::where('jenis', 'grup')->max('id')]);
         $this->tandaiNotif($user, route('chat.grup', [], false));
@@ -113,6 +118,12 @@ class ChatController extends Controller
         if ($user->role === User::ORANG_TUA) return $user;
 
         return User::where('role', User::ORANG_TUA)->findOrFail($request->input('ortu'));
+    }
+
+    /** true bila permintaan hanya menanyakan pesan setelah ID tertentu (polling berkala). */
+    private function hanyaCekBaru(Request $request): bool
+    {
+        return (int) $request->query('setelah', 0) > 0;
     }
 
     /** Pesan terbaru (100 terakhir), atau yang lebih baru dari ?setelah=ID. */

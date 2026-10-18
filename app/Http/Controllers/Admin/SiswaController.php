@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dokumentasi;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\User;
@@ -46,7 +47,13 @@ class SiswaController extends Controller
 
     public function destroy(Siswa $siswa)
     {
-        if ($siswa->foto) Storage::disk('local')->delete($siswa->foto);
+        // Baris tagihan & dokumentasi khusus anak ini ikut terhapus oleh database (cascade),
+        // tetapi filenya tidak. Hapus dulu agar foto anak & bukti bayar tidak tertinggal di penyimpanan.
+        $file = collect([$siswa->foto])
+            ->merge($siswa->tagihan()->whereNotNull('bukti')->pluck('bukti'))
+            ->merge(Dokumentasi::where('siswa_id', $siswa->id)->pluck('gambar'))
+            ->filter()->values()->all();
+        if ($file) Storage::disk('local')->delete($file);
         $siswa->delete();
         return back()->with('success', 'Data siswa dihapus.');
     }
@@ -69,7 +76,7 @@ class SiswaController extends Controller
             'tanggal_lahir' => 'required|date',
             'alamat' => 'nullable|string|max:255',
             'kelas_id' => 'nullable|exists:kelas,id',
-            'orang_tua_id' => 'nullable|exists:users,id',
+            'orang_tua_id' => ['nullable', Rule::exists('users', 'id')->where('role', User::ORANG_TUA)],
             'foto' => 'nullable|image|max:2048',
             'panggilan' => 'nullable|string|max:50',
             'tempat_lahir' => 'nullable|string|max:100',

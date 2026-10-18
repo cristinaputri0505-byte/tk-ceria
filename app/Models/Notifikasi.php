@@ -27,22 +27,26 @@ class Notifikasi extends Model
         if ($userIds->isEmpty()) return;
         $isi = $isi !== null ? Str::limit($isi, 250) : null;
 
+        $judul = Str::limit($judul, 150, '');
+        $now = now();
+
         if ($kategori === 'chat') {
-            foreach ($userIds as $id) {
-                $ada = static::where('user_id', $id)->where('kategori', 'chat')->where('url', $url)->whereNull('dibaca_at')->first();
-                if ($ada) {
-                    $ada->update(['judul' => $judul, 'isi' => $isi, 'created_at' => now()]);
-                } else {
-                    static::create(['user_id' => $id, 'kategori' => 'chat', 'judul' => $judul, 'isi' => $isi, 'url' => $url]);
-                }
+            // Notifikasi chat yang belum dibaca cukup diperbarui (2 query untuk semua penerima,
+            // bukan 2 query per orang tua seperti sebelumnya: pesan grup dikirim ke semua orang tua).
+            $belumDibaca = fn () => static::whereIn('user_id', $userIds)->where('kategori', 'chat')->where('url', $url)->whereNull('dibaca_at');
+            $sudahAda = $belumDibaca()->pluck('user_id')->map(fn ($id) => (int) $id);
+            if ($sudahAda->isNotEmpty()) {
+                $belumDibaca()->update(['judul' => $judul, 'isi' => $isi, 'created_at' => $now, 'updated_at' => $now]);
             }
-            return;
+            $userIds = $userIds->map(fn ($id) => (int) $id)->diff($sudahAda)->values();
+            if ($userIds->isEmpty()) return;
         }
 
-        $now = now();
-        static::insert($userIds->map(fn ($id) => [
-            'user_id' => $id, 'kategori' => $kategori, 'judul' => Str::limit($judul, 150, ''), 'isi' => $isi, 'url' => $url,
-            'dibaca_at' => null, 'created_at' => $now, 'updated_at' => $now,
-        ])->all());
+        foreach ($userIds->chunk(500) as $potongan) {
+            static::insert($potongan->map(fn ($id) => [
+                'user_id' => $id, 'kategori' => $kategori, 'judul' => $judul, 'isi' => $isi, 'url' => $url,
+                'dibaca_at' => null, 'created_at' => $now, 'updated_at' => $now,
+            ])->values()->all());
+        }
     }
 }

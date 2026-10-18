@@ -1,4 +1,4 @@
-# TK Ceria — Aplikasi Akademik TK (Laravel 11)
+# TK Ceria — Aplikasi Akademik TK (Laravel 12)
 
 Website sekolah (halaman visitor) + sistem akademik dengan 3 jenis login:
 
@@ -10,36 +10,29 @@ Website sekolah (halaman visitor) + sistem akademik dengan 3 jenis login:
 
 Pengunjung bisa melihat profil, program, kegiatan, guru, berita, dan **mendaftar online**.
 
-## Instalasi
-
-Folder ini berisi file aplikasi yang ditimpakan ke proyek Laravel 11 baru.
+## Menjalankan di laptop (Laragon)
 
 ```bash
-# 1. Buat proyek Laravel baru
-composer create-project laravel/laravel tk-ceria
-cd tk-ceria
-
-# 2. Salin isi folder ini ke dalam proyek (timpa file yang sama)
-#    app/, bootstrap/app.php, database/, resources/views/, routes/web.php, public/images/
-
-# 3. Atur .env
-#    APP_NAME="TK Ceria"
-#    APP_LOCALE=id
-#    APP_TIMEZONE=Asia/Jakarta     (di Laravel 11 atur di config/app.php -> 'timezone')
-#    DB_CONNECTION=mysql
-#    DB_DATABASE=tk_ceria
-#    DB_USERNAME=root
-#    DB_PASSWORD=
-
-# 4. Migrasi + data contoh, lalu tautkan folder upload
-php artisan migrate:fresh --seed
+composer install
+npm install
+cp .env.example .env          # di Windows: copy .env.example .env
+php artisan key:generate
+php artisan migrate --seed     # data contoh (jangan dipakai di produksi)
 php artisan storage:link
-
-# 5. Jalankan
+npm run build                  # CSS, font, dan file ikon
 php artisan serve
 ```
 
-Buka http://127.0.0.1:8000 — tombol **Login** ada di kanan atas.
+Buka http://127.0.0.1:8000 — tombol **Login** ada di kanan atas. Di laptop, database bisa SQLite/MySQL dan file upload disimpan di folder `storage/`.
+
+## Produksi (Vercel + Supabase)
+
+- Setiap `git push` ke GitHub, Vercel membangun container dari `Dockerfile.vercel` (FrankenPHP).
+- Database: PostgreSQL Supabase. File upload: Supabase Storage (bucket `tk-ceria-publik` dan `tk-ceria-privat`), karena disk server Vercel tidak permanen.
+- Daftar Environment Variables ada di `.env.production.example`; isi nilainya di Vercel → Settings → Environment Variables.
+- Migrasi database tidak berjalan otomatis saat deploy. Setelah menambah migrasi, jalankan `php artisan migrate --force` ke database Supabase.
+- `public/build` dan `public/js/ikon.min.js` ikut di-commit, karena Vercel tidak menjalankan `npm run build`. **Setelah mengubah tampilan atau menambah ikon, jalankan `npm run build` sebelum push.**
+- Periksa kesiapan: `php artisan tk:cek-produksi`.
 
 ## Akun demo (kata sandi: `password`)
 
@@ -84,7 +77,7 @@ Kolom teks yang dikosongkan kembali ke tulisan bawaan.
 
 ## Foto halaman depan
 
-Taruh foto Anda di `public/images/`:
+Cara yang disarankan: unggah lewat Admin → Website → **Pengaturan Halaman** (foto tersimpan di Supabase Storage). Sebagai cadangan, foto juga bisa ditaruh di `public/images/` lalu di-commit:
 
 - `hero.jpg` — foto anak-anak di banner utama (rasio lebar, ±1400×800)
 - `gedung.jpg` — foto gedung sekolah di bagian Tentang Kami
@@ -111,4 +104,4 @@ resources/views/layouts/public      layout website visitor
 resources/views/layouts/dashboard   layout panel (sidebar menyesuaikan peran)
 ```
 
-Tampilan memakai Tailwind CDN agar langsung jalan tanpa `npm`. Untuk produksi, pindahkan konfigurasi warna di `resources/views/partials/head.blade.php` ke `tailwind.config.js` dan build dengan Vite.
+Tampilan memakai Tailwind yang di-build dengan Vite (`npm run build`). Ikon memakai Lucide, tetapi hanya ikon yang dipakai yang dimasukkan ke `public/js/ikon.min.js` (dibuat oleh `scripts/buat-ikon.cjs`, otomatis saat `npm run build`). Test `PerbaikanTest` akan gagal bila ada ikon di view yang belum masuk file tersebut.

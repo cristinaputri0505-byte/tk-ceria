@@ -57,7 +57,7 @@ class DashboardController extends Controller
 
         $agenda = Kegiatan::whereDate('tanggal', '>=', today())->orderBy('tanggal')->take(5)->get()
             ->map(fn ($k) => ['tanggal' => $k->tanggal, 'judul' => $k->judul, 'jenis' => 'Kegiatan sekolah', 'url' => route('kegiatan.show', $k)])
-            ->concat(Pengumuman::untukKelas($kelasIds)->whereDate('tanggal_acara', '>=', today())->get()
+            ->concat(Pengumuman::with('kelas')->untukKelas($kelasIds)->whereDate('tanggal_acara', '>=', today())->get()
                 ->map(fn ($p) => ['tanggal' => $p->tanggal_acara, 'judul' => $p->judul, 'jenis' => $p->kelas ? 'Kelas '.$p->kelas->nama : 'Pengumuman', 'url' => route('orangtua.pengumuman')]))
             ->sortBy('tanggal')->take(5)->values();
 
@@ -95,7 +95,7 @@ class DashboardController extends Controller
             'periodeList' => $periodeList,
             'periode' => $periode,
             'perkembangan' => $siswa->perkembangan()->with('guru')->where('periode', $periode)->get()->keyBy('aspek'),
-            'tagihan' => $siswa->tagihan()->orderByDesc('bulan')->orderByDesc('id')->get(),
+            'tagihan' => $siswa->tagihan()->orderByDesc('bulan')->orderByDesc('id')->get()->each->setRelation('siswa', $siswa),
             'dokumentasi' => Dokumentasi::untukSiswa($siswa)->latest('tanggal')->latest('id')->take(30)->get(),
         ]);
     }

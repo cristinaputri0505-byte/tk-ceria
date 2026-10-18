@@ -14,7 +14,9 @@ class Berita extends Model
     protected static function booted(): void
     {
         static::saving(function (Berita $b) {
-            if (! $b->slug || $b->isDirty('judul')) {
+            // Slug dibuat sekali saja. Kalau ikut berubah saat judul diedit, tautan berita yang
+            // sudah dibagikan (WhatsApp, Facebook) menjadi halaman 404.
+            if (! $b->slug) {
                 $b->slug = Str::slug($b->judul) . '-' . Str::lower(Str::random(4));
             }
         });

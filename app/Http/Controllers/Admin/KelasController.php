@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\User;
+use App\Models\Dokumentasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class KelasController extends Controller
 {
@@ -41,6 +44,9 @@ class KelasController extends Controller
         if ($kelas->siswa()->exists()) {
             return back()->with('error', 'Kelas masih memiliki siswa. Pindahkan siswa ke kelas lain sebelum menghapus.');
         }
+        // Foto dokumentasi kelas ikut terhapus dari database (cascade); hapus juga filenya.
+        $foto = Dokumentasi::where('kelas_id', $kelas->id)->pluck('gambar')->filter()->all();
+        if ($foto) Storage::disk('local')->delete($foto);
         $kelas->delete();
         return back()->with('success', 'Kelas dihapus.');
     }
@@ -56,7 +62,7 @@ class KelasController extends Controller
             'nama' => 'required|string|max:50',
             'kelompok' => 'required|in:A,B',
             'tahun_ajaran' => 'required|string|max:20',
-            'wali_guru_id' => 'nullable|exists:users,id',
+            'wali_guru_id' => ['nullable', Rule::exists('users', 'id')->where('role', User::GURU)],
         ]);
     }
 }
