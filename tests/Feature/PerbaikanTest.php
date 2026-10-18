@@ -248,4 +248,15 @@ class PerbaikanTest extends TestCase
         $this->assertNotNull($budi->foto);
         $this->actingAs($budi)->get(route('orangtua.dashboard'))->assertOk()->assertSee($budi->foto_url, false);
     }
+
+    public function test_semua_halaman_memuat_penjaga_foto_dan_daftar_akun_menampilkan_foto(): void
+    {
+        $this->get('/')->assertOk()->assertSee('js/foto.js?v=', false);
+        $this->assertFileExists(public_path('js/foto.js'));
+
+        $rina = $this->u('rina@tkceria.sch.id');
+        $rina->update(['foto' => 'pengguna/rina.jpg']);
+        $this->actingAs($this->u('admin@tkceria.sch.id'))->get(route('admin.pengguna.index', ['role' => 'guru']))
+            ->assertOk()->assertSee($rina->foto_url, false);
+    }
 }

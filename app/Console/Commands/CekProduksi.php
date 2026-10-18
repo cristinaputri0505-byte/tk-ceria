@@ -51,6 +51,16 @@ class CekProduksi extends Command
                 return $kode === 200;
             }, true, false);
             $cek('Bucket privat TIDAK bisa dibuka publik (foto anak & bukti bayar aman)', ! $privatTerbuka, 'Di Supabase Storage, matikan opsi "Public bucket" untuk bucket privat');
+
+            // Foto galeri, berita, guru, logo, banner dibuka langsung dari URL publik bucket publik.
+            $tes = 'cek-produksi/' . uniqid() . '.txt';
+            $publikTerbuka = rescue(function () use ($tes) {
+                Storage::disk('public')->put($tes, 'tes');
+                $kode = \Illuminate\Support\Facades\Http::timeout(10)->get(Storage::disk('public')->url($tes))->status();
+                Storage::disk('public')->delete($tes);
+                return $kode === 200;
+            }, false, false);
+            $cek('Bucket publik bisa dibuka (foto galeri, berita, guru, logo tampil)', $publikTerbuka, 'Di Supabase Storage, aktifkan opsi "Public bucket" untuk bucket publik');
         } else {
             $cek('Link folder upload (storage:link)', file_exists(public_path('storage')), 'Jalankan: php artisan storage:link (atau isi SUPABASE_STORAGE=true di Vercel)');
             $cek('Folder storage bisa ditulisi', is_writable(storage_path('app')) && is_writable(storage_path('logs')), 'Beri izin tulis ke folder storage/ dan bootstrap/cache/');

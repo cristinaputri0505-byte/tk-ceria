@@ -167,7 +167,7 @@ class DashboardController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:100',
             'telepon' => 'nullable|string|max:20',
-            'foto' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:4096',
             'current_password' => 'nullable|required_with:password|current_password',
             'password' => ['nullable', 'confirmed', Password::min(8)],
         ], [], ['current_password' => 'kata sandi lama', 'password' => 'kata sandi baru']);

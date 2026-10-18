@@ -77,7 +77,7 @@ class SiswaController extends Controller
             'alamat' => 'nullable|string|max:255',
             'kelas_id' => 'nullable|exists:kelas,id',
             'orang_tua_id' => ['nullable', Rule::exists('users', 'id')->where('role', User::ORANG_TUA)],
-            'foto' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:4096',
             'panggilan' => 'nullable|string|max:50',
             'tempat_lahir' => 'nullable|string|max:100',
             'agama' => 'nullable|string|max:30',

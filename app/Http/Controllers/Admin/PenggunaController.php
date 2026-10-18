@@ -74,7 +74,7 @@ class PenggunaController extends Controller
             'telepon' => 'nullable|string|max:20',
             'jabatan' => 'nullable|string|max:100',
             'password' => [$user ? 'nullable' : 'required', 'string', 'min:8'],
-            'foto' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:4096',
         ]);
 
         if (empty($data['password'])) unset($data['password']);

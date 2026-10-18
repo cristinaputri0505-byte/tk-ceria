@@ -24,7 +24,7 @@
     <tbody class="divide-y divide-slate-100">
     @forelse ($pengguna as $u)
         <tr>
-            <td class="px-5 py-3 font-bold text-navy">{{ $u->name }}</td>
+            <td class="px-5 py-3"><div class="flex items-center gap-3">@include('partials.avatar', ['u' => $u, 'kelas' => 'w-10 h-10 shrink-0 rounded-full bg-sky-soft text-sky font-display text-base grid place-items-center'])<span class="font-bold text-navy">{{ $u->name }}</span></div></td>
             <td class="px-5 py-3">{{ $u->email }}</td>
             <td class="px-5 py-3">{{ $u->telepon ?? '—' }}</td>
             <td class="px-5 py-3">{{ $role === 'orangtua' ? $u->anak_count.' anak' : ($u->jabatan ?? '—') }}</td>

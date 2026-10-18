@@ -6,11 +6,7 @@
     <form method="POST" action="{{ route('orangtua.profil.update') }}" enctype="multipart/form-data" class="lg:col-span-2 bg-white rounded-3xl border border-slate-100 p-6 grid sm:grid-cols-2 gap-5">
         @csrf @method('PUT')
         <div class="sm:col-span-2 flex items-center gap-4">
-            @if ($user->foto)
-                <img src="{{ $user->foto_url }}" alt="Foto profil" class="w-20 h-20 rounded-full object-cover">
-            @else
-                <span class="w-20 h-20 rounded-full grid place-items-center bg-sky-soft font-display text-3xl text-sky">{{ $user->inisial }}</span>
-            @endif
+            @include('partials.avatar', ['u' => $user, 'kelas' => 'w-20 h-20 shrink-0 rounded-full grid place-items-center bg-sky-soft font-display text-3xl text-sky'])
             <div>
                 <p class="font-display text-xl font-semibold text-navy">{{ $user->name }}</p>
                 <p class="text-sm text-slate-500">{{ $user->email }} · Orang tua</p>
