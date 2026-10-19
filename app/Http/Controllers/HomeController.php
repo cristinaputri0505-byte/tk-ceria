@@ -14,7 +14,7 @@ class HomeController extends Controller
     {
         return view('home', [
             'programs' => Program::orderBy('urutan')->get(),
-            'kegiatan' => Kegiatan::latest('tanggal')->take(5)->get(),
+            'kegiatan' => Kegiatan::denganJumlahFoto()->latest('tanggal')->take(5)->get(),
             'guru' => Staff::orderBy('urutan')->take(8)->get(),
             'keunggulan' => Keunggulan::orderBy('urutan')->take(6)->get(),
             'berita' => Berita::terbit()->latest('published_at')->take(3)->get(),

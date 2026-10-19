@@ -28,14 +28,15 @@ class PageController extends Controller
 
     public function kegiatan()
     {
-        return view('pages.kegiatan', ['kegiatan' => Kegiatan::latest('tanggal')->paginate(12)]);
+        return view('pages.kegiatan', ['kegiatan' => Kegiatan::denganJumlahFoto()->latest('tanggal')->paginate(12)]);
     }
 
     public function kegiatanShow(Kegiatan $kegiatan)
     {
         return view('pages.kegiatan-show', [
             'kegiatan' => $kegiatan,
-            'lainnya' => Kegiatan::whereKeyNot($kegiatan->id)->latest('tanggal')->take(4)->get(),
+            'foto' => $kegiatan->daftarFoto(),
+            'lainnya' => Kegiatan::denganJumlahFoto()->whereKeyNot($kegiatan->id)->latest('tanggal')->take(4)->get(),
         ]);
     }
 

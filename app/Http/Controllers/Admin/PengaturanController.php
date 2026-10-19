@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Support\Unggah;
 use App\Http\Controllers\Controller;
+use App\Support\Basisdata;
 use App\Support\CekPenyimpanan;
 use App\Support\Pengaturan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PengaturanController extends Controller
 {
@@ -62,9 +64,22 @@ class PengaturanController extends Controller
             ->with('success', 'Perubahan tersimpan dan sudah tampil di website.');
     }
 
-    /** Admin → Cek Penyimpanan: memeriksa Supabase Storage dari server yang sedang berjalan. */
-    public function cekPenyimpanan()
+    /** Admin → Cek Sistem: penyimpanan file (Supabase Storage) dan struktur database. */
+    public function cekSistem()
     {
-        return view('admin.cek-penyimpanan', ['hasil' => CekPenyimpanan::jalankan()]);
+        return view('admin.cek-sistem', [
+            'hasil' => CekPenyimpanan::jalankan(),
+            'tertunda' => rescue(fn () => Basisdata::migrasiTertunda(), ['(tidak bisa membaca daftar migrasi)'], false),
+        ]);
+    }
+
+    /** Menjalankan migrasi database yang belum dijalankan (Vercel tidak menjalankannya otomatis). */
+    public function perbaruiDatabase()
+    {
+        [$berhasil, $keluaran] = Basisdata::perbarui();
+        Log::info('Admin memperbarui database', ['berhasil' => $berhasil, 'keluaran' => mb_substr($keluaran, 0, 1000)]);
+
+        return redirect()->route('admin.cek-sistem')
+            ->with($berhasil ? 'success' : 'error', $berhasil ? 'Database berhasil diperbarui.' : 'Database gagal diperbarui: ' . mb_substr($keluaran, 0, 300));
     }
 }

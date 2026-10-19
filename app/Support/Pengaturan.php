@@ -102,7 +102,7 @@ class Pengaturan
 
             'kegiatan' => ['Kegiatan', 'party-popper', [
                 ...static::banner('kegiatan', 'Kegiatan Kami', 'Keseruan belajar dan bermain bersama'),
-            ], ['Daftar kegiatan' => 'admin.kegiatan.index']],
+            ], ['Daftar kegiatan & foto' => 'admin.kegiatan.index']],
 
             'galeri' => ['Galeri', 'images', [
                 ...static::banner('galeri', 'Galeri Foto', 'Momen-momen ceria di sekolah'),

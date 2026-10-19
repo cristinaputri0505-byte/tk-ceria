@@ -30,6 +30,9 @@
                 <div>
                     <h2 class="font-display text-xl font-semibold text-navy">Halaman {{ $tInfo[0] }}</h2>
                     <p class="text-sm text-slate-500 mt-1">Kosongkan kolom teks untuk kembali ke tulisan bawaan.</p>
+                    @if (! empty($tInfo[3]))
+                        <p class="text-sm text-amber-700 mt-1">Di sini hanya banner &amp; teks halaman. Isi halaman (kartu dan fotonya) diatur lewat tombol <b>Kelola</b> di kanan.</p>
+                    @endif
                 </div>
                 @if (! empty($tInfo[3]))
                     <div class="flex flex-wrap gap-2">

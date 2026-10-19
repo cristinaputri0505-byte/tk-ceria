@@ -288,12 +288,89 @@ class PerbaikanTest extends TestCase
             ->assertSessionHasErrors('foto');
     }
 
-    public function test_halaman_cek_penyimpanan_hanya_admin_dan_menampilkan_hasil(): void
+    public function test_halaman_cek_sistem_hanya_admin_dan_menampilkan_hasil(): void
     {
         Storage::fake('local');
         Storage::fake('public');
-        $this->actingAs($this->u('budi@contoh.com'))->get(route('admin.cek-penyimpanan'))->assertForbidden();
-        $this->actingAs($this->u('admin@tkceria.sch.id'))->get(route('admin.cek-penyimpanan'))
+        $this->actingAs($this->u('budi@contoh.com'))->get(route('admin.cek-sistem'))->assertForbidden();
+        $this->actingAs($this->u('admin@tkceria.sch.id'))->get(route('admin.cek-sistem'))
             ->assertOk()->assertSee('Penyimpanan berjalan normal');
+    }
+
+    public function test_kegiatan_bisa_banyak_foto_sampul_dan_hapus(): void
+    {
+        Storage::fake('public');
+        $admin = $this->u('admin@tkceria.sch.id');
+
+        $this->actingAs($admin)->post(route('admin.kegiatan.store'), [
+            'judul' => 'Album Uji Coba', 'tanggal' => '2026-11-03',
+            'foto' => [UploadedFile::fake()->image('1.jpg'), UploadedFile::fake()->image('2.jpg'), UploadedFile::fake()->image('3.jpg')],
+        ])->assertRedirect(route('admin.kegiatan.index'));
+
+        $k = Kegiatan::where('judul', 'Album Uji Coba')->firstOrFail();
+        $album = $k->foto;
+        $this->assertCount(3, $album);
+        $this->assertSame($album[0]->gambar, $k->gambar, 'Foto pertama otomatis jadi sampul');
+        Storage::disk('public')->assertExists($album->pluck('gambar')->all());
+
+        // Halaman publik: kartu menampilkan jumlah foto, halaman detail menampilkan semua foto
+        $this->get(route('kegiatan.index'))->assertOk()->assertSee('3 foto');
+        $detail = $this->get(route('kegiatan.show', $k))->assertOk();
+        foreach ($album as $f) $detail->assertSee($f->url, false);
+
+        // Ubah: hapus foto pertama (sampul), pilih foto ke-3 sebagai sampul, tambah 1 foto
+        $this->actingAs($admin)->put(route('admin.kegiatan.update', $k), [
+            'judul' => 'Album Uji Coba', 'tanggal' => '2026-11-03',
+            'hapus_foto' => [$album[0]->id], 'sampul' => $album[2]->id,
+            'foto' => [UploadedFile::fake()->image('4.jpg')],
+        ])->assertRedirect(route('admin.kegiatan.edit', $k));
+
+        $k->refresh();
+        $this->assertCount(3, $k->foto);
+        $this->assertSame($album[2]->gambar, $k->gambar);
+        Storage::disk('public')->assertMissing($album[0]->gambar);
+
+        // Hapus kegiatan: semua file ikut terhapus
+        $sisa = $k->foto->pluck('gambar')->all();
+        $this->actingAs($admin)->delete(route('admin.kegiatan.destroy', $k))->assertRedirect();
+        Storage::disk('public')->assertMissing($sisa);
+    }
+
+    public function test_kegiatan_maksimal_foto_sekali_simpan(): void
+    {
+        Storage::fake('public');
+        $foto = array_map(fn ($i) => UploadedFile::fake()->image("$i.jpg"), range(1, \App\Http\Controllers\Admin\KegiatanController::MAKS_FOTO_SEKALI + 1));
+
+        $this->actingAs($this->u('admin@tkceria.sch.id'))->post(route('admin.kegiatan.store'), [
+            'judul' => 'Terlalu banyak', 'tanggal' => '2026-11-03', 'foto' => $foto,
+        ])->assertSessionHasErrors('foto');
+    }
+
+    public function test_website_tetap_jalan_sebelum_database_diperbarui(): void
+    {
+        Storage::fake('public');
+        \Illuminate\Support\Facades\Schema::drop('kegiatan_foto');
+        \App\Support\Basisdata::lupakan();
+        $k = Kegiatan::firstOrFail();
+
+        $this->get('/')->assertOk();
+        $this->get(route('kegiatan.index'))->assertOk();
+        $this->get(route('kegiatan.show', $k))->assertOk();
+
+        $admin = $this->u('admin@tkceria.sch.id');
+        $this->actingAs($admin)->get(route('admin.kegiatan.edit', $k))->assertOk()->assertSee('perbarui database dulu', false);
+        $this->actingAs($admin)->put(route('admin.kegiatan.update', $k), [
+            'judul' => $k->judul, 'tanggal' => $k->tanggal->toDateString(), 'gambar' => UploadedFile::fake()->image('a.jpg'),
+        ])->assertRedirect();
+        $this->assertNotNull($k->fresh()->gambar);
+
+        // Cek Sistem menawarkan pembaruan, dan tombolnya membuat tabel kembali
+        \Illuminate\Support\Facades\DB::table('migrations')->where('migration', '2026_10_19_000001_create_kegiatan_foto_table')->delete();
+        $this->actingAs($admin)->get(route('admin.cek-sistem'))->assertOk()->assertSee('Perbarui database sekarang');
+        $this->actingAs($admin)->post(route('admin.cek-sistem.database'))->assertRedirect(route('admin.cek-sistem'))->assertSessionHas('success');
+        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasTable('kegiatan_foto'));
+        $this->assertSame(1, \App\Models\KegiatanFoto::where('kegiatan_id', $k->id)->count(), 'Foto lama ikut masuk album');
+
+        $this->actingAs($this->u('budi@contoh.com'))->post(route('admin.cek-sistem.database'))->assertForbidden();
     }
 }
