@@ -60,13 +60,39 @@
         } catch (e) { /* browser memblokir audio sebelum ada sentuhan: abaikan */ }
     }
 
+    /* Pilih suara Bahasa Indonesia yang terpasang di perangkat. Tanpa ini, browser sering memakai
+       suara bawaan berbahasa Inggris sehingga soal dibacakan dengan logat Inggris. */
+    var suaraID = null, suaraSudahDicek = false;
+    function muatSuara() {
+        if (!('speechSynthesis' in window)) return;
+        var semua = window.speechSynthesis.getVoices();
+        if (!semua.length) return; // daftar suara belum siap, tunggu onvoiceschanged
+        var cari = function (uji) { for (var i = 0; i < semua.length; i++) if (uji(semua[i])) return semua[i]; return null; };
+        suaraID = cari(function (v) { return /^id([-_]|$)/i.test(v.lang) && /google/i.test(v.name); }) // suara Google biasanya paling jelas
+            || cari(function (v) { return /^id([-_]|$)/i.test(v.lang); })
+            || cari(function (v) { return /indonesia/i.test(v.name); })
+            || cari(function (v) { return /^ms([-_]|$)/i.test(v.lang); });          // Melayu: masih mirip bila Indonesia tidak ada
+        if (!suaraSudahDicek) {
+            suaraSudahDicek = true;
+            var info = document.getElementById('info-suara');
+            if (info && !(suaraID && /^id/i.test(suaraID.lang))) info.classList.remove('hidden');
+        }
+    }
+    if ('speechSynthesis' in window) {
+        muatSuara();
+        window.speechSynthesis.onvoiceschanged = muatSuara;
+    }
+
     function bicara(teks) {
         if (!('speechSynthesis' in window) || !teks) return;
         window.speechSynthesis.cancel();
+        if (!suaraID) muatSuara();
         // Emoji tidak dibacakan agar suara tidak menyebut nama simbol
         var bersih = String(teks).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, ' ').replace(/\s+/g, ' ').trim();
         var u = new SpeechSynthesisUtterance(bersih);
-        u.lang = 'id-ID'; u.rate = 0.92; u.pitch = 1.15;
+        if (suaraID) u.voice = suaraID;
+        u.lang = suaraID ? suaraID.lang : 'id-ID';
+        u.rate = 0.92; u.pitch = 1.15;
         window.speechSynthesis.speak(u);
     }
 
@@ -493,6 +519,7 @@
             case 'tutup': tutup(); break;
             case 'lanjut': bunyi('klik'); $('jendela-hore').classList.add('hidden'); tutup(true); break;
             case 'tutup-karya': bunyi('klik'); $('jendela-karya').classList.add('hidden'); break;
+            case 'tutup-info-suara': $('info-suara').classList.add('hidden'); break;
         }
     });
     document.addEventListener('keydown', function (e) {

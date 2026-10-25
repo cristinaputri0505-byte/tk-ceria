@@ -66,6 +66,23 @@
         <div class="absolute -right-6 -bottom-6 text-8xl opacity-25 pointer-events-none" aria-hidden="true">🎨</div>
     </section>
 
+    {{-- Muncul hanya bila perangkat belum punya suara Bahasa Indonesia (diatur oleh belajar.js) --}}
+    <section id="info-suara" class="hidden bg-amber-50 border-2 border-amber-200 rounded-3xl p-4 text-sm text-amber-800">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <p class="font-bold">🔈 Suara Bahasa Indonesia belum terpasang di perangkat ini</p>
+                <p class="mt-1">Soal mungkin dibacakan dengan logat bahasa Inggris. Untuk orang tua, cara memasang suara Bahasa Indonesia (gratis):</p>
+                <ul class="mt-2 space-y-1 list-disc pl-5">
+                    <li><b>HP Android:</b> Setelan → cari <i>Text-to-speech</i> (Teks ke ucapan) → mesin <b>Google</b> → ikon ⚙️ → <i>Instal data suara</i> → <b>Indonesia</b>. Lalu pilih bahasa <b>Indonesia</b>. Pakai browser <b>Chrome</b>.</li>
+                    <li><b>iPhone/iPad:</b> Pengaturan → Aksesibilitas → Konten Lisan → Suara → <b>Indonesia</b> → unduh salah satu suara.</li>
+                    <li><b>Laptop Windows:</b> Settings → Time &amp; language → Speech → <i>Add voices</i> → <b>Indonesian</b>. Atau buka halaman ini dengan <b>Google Chrome</b> (sudah ada suara Indonesia).</li>
+                </ul>
+                <p class="mt-2">Setelah itu, muat ulang halaman ini.</p>
+            </div>
+            <button type="button" data-aksi="tutup-info-suara" class="shrink-0 w-8 h-8 grid place-items-center rounded-full bg-white text-amber-700" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+    </section>
+
     {{-- Progres --}}
     <section class="bg-white rounded-3xl p-4 md:p-5 border-4 border-pink-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">

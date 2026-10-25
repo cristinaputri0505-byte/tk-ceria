@@ -373,4 +373,23 @@ class PerbaikanTest extends TestCase
 
         $this->actingAs($this->u('budi@contoh.com'))->post(route('admin.cek-sistem.database'))->assertForbidden();
     }
+
+    public function test_pesan_sistem_berbahasa_indonesia(): void
+    {
+        $this->assertSame('id', app()->getLocale());
+
+        // Pesan validasi
+        $this->actingAs($this->u('admin@tkceria.sch.id'))->post(route('admin.kelas.store'), [])
+            ->assertSessionHasErrors(['nama' => 'Nama wajib diisi.']);
+
+        // Login gagal
+        auth()->logout();
+        $this->post(route('login.attempt'), ['email' => 'bukan-email', 'password' => 'x'])
+            ->assertSessionHasErrors(['email' => 'Email harus berupa alamat email yang valid.']);
+
+        // Navigasi halaman (pagination)
+        foreach (range(1, 45) as $i) \App\Models\Pesan::create(['nama' => "Tamu $i", 'pesan' => 'Halo', 'telepon' => '08123']);
+        $this->actingAs($this->u('admin@tkceria.sch.id'))->get(route('admin.pesan.index'))
+            ->assertOk()->assertSee('Menampilkan')->assertSee('Berikutnya', false)->assertDontSee('Showing');
+    }
 }
