@@ -160,7 +160,7 @@
 
     /* ---------- Tampilan utama ---------- */
     function totalBintang() {
-        var n = 0;
+        var n = Number(D.bintangLama) || 0;   // bintang Soal Hari Ini dari hari-hari sebelumnya
         for (var k in hasil) n += Number(hasil[k].bintang) || 0;
         return n;
     }
@@ -210,7 +210,7 @@
             wadah.appendChild(h('article', tema.kartu + ' border-4 rounded-3xl p-5 md:p-6 shadow-md hover:shadow-xl transition-all flex flex-col justify-between', [
                 h('div', null, [
                     h('div', 'flex items-center justify-between gap-2 mb-4', [
-                        h('span', tema.label + ' text-xs md:text-sm font-bold px-3 py-1 rounded-full', TIPE[t.tipe] || 'Tugas'),
+                        h('span', tema.label + ' text-xs md:text-sm font-bold px-3 py-1 rounded-full', (t.harian ? '📅 Soal Hari Ini · ' : '') + (TIPE[t.tipe] || 'Tugas')),
                         r.selesai
                             ? h('span', 'bg-emerald-100 border-2 border-emerald-400 text-emerald-700 text-xs md:text-sm font-bold px-3 py-1 rounded-full', 'Selesai ✅')
                             : h('span', 'bg-white border-2 border-slate-200 text-slate-600 text-xs md:text-sm font-bold px-3 py-1 rounded-full', 'Belum dikerjakan')
@@ -288,8 +288,12 @@
         var d = t.data || {}, warna = ['btn-pink', 'btn-blue', 'btn-green', 'btn-purple'];
         var fb = h('div', 'min-h-8 text-lg font-bold');
         var grid = h('div', 'grid grid-cols-1 sm:grid-cols-2 gap-4');
-        (d.opsi || []).forEach(function (opsi, i) {
-            var b = h('button', 'btn-3d ' + warna[i % 4] + ' text-white p-5 rounded-3xl font-bold text-xl md:text-2xl flex items-center justify-center min-h-[90px]', opsi, { type: 'button' });
+        // Urutan pilihan diacak setiap kali dimainkan, supaya tidak selalu sama.
+        var urutan = (d.opsi || []).map(function (o, i) { return i; });
+        for (var k = urutan.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var s = urutan[k]; urutan[k] = urutan[j]; urutan[j] = s; }
+        urutan.forEach(function (i, posisi) {
+            var opsi = d.opsi[i];
+            var b = h('button', 'btn-3d ' + warna[posisi % 4] + ' text-white p-5 rounded-3xl font-bold text-xl md:text-2xl flex items-center justify-center min-h-[90px]', opsi, { type: 'button' });
             b.onclick = function () {
                 if (i === Number(d.benar)) { bunyi('benar'); umpan(fb, '🎉 Yeay! Jawabanmu benar!', true); selesai(); }
                 else { bunyi('salah'); goyang(b); umpan(fb, '🙈 Hmm, belum tepat nih. Coba lagi, kamu pasti bisa!', false); bicara(acak(SALAH)); }
@@ -297,7 +301,10 @@
             grid.appendChild(b);
         });
         area.appendChild(h('div', 'text-center space-y-6', [
-            h('div', 'bg-sky-50 border-4 border-sky-100 rounded-3xl py-8 px-4 inline-block min-w-[240px] shadow-inner', h('div', 'text-6xl md:text-8xl tracking-widest belajar-float', d.gambar || t.ikon)),
+            h('div', 'bg-sky-50 border-4 border-sky-100 rounded-3xl py-8 px-4 inline-block min-w-[240px] shadow-inner', [
+                h('div', 'text-6xl md:text-8xl tracking-widest belajar-float', d.gambar || t.ikon),
+                d.bunyi ? h('div', 'text-3xl md:text-4xl font-bold text-sky-700 mt-3', '“' + d.bunyi + '”') : null
+            ].filter(Boolean)),
             fb, grid
         ]));
     }
@@ -500,7 +507,7 @@
         t._terkirim = true; // cegah kiriman ganda bila tombol benar disentuh berkali-kali
         var body = gambar ? JSON.stringify({ gambar: gambar }) : '{}';
 
-        return fetch(D.kirim.replace('__ID__', t.id), {
+        return fetch(t.kirim || D.kirim.replace('__ID__', t.id), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': D.csrf },
             body: body

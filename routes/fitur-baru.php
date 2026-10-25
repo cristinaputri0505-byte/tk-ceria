@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:orangtua'])->prefix('belajar')->name('belajar.'
     Route::get('suara', [BelajarController::class, 'suara'])->middleware('throttle:150,1')->name('suara');
     Route::get('{siswa}', [BelajarController::class, 'main'])->whereNumber('siswa')->name('main');
     Route::post('{siswa}/tugas/{tugas}/selesai', [BelajarController::class, 'selesai'])->whereNumber(['siswa', 'tugas'])->middleware('throttle:60,1')->name('selesai');
+    Route::post('{siswa}/harian/{tanggal}/{nomor}/selesai', [BelajarController::class, 'selesaiHarian'])->whereNumber(['siswa', 'nomor'])->where('tanggal', '\d{4}-\d{2}-\d{2}')->middleware('throttle:60,1')->name('harian');
 });
 
 /* Karya gambar anak (privat; hak akses dicek di controller) */

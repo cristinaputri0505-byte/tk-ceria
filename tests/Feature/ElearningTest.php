@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ElearningHarian;
 use App\Models\ElearningHasil;
 use App\Models\ElearningTugas;
 use App\Models\Kelas;
@@ -9,6 +10,7 @@ use App\Models\Siswa;
 use App\Models\User;
 use App\Support\Basisdata;
 use App\Support\Pengaturan;
+use App\Support\SoalHarian;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -249,5 +251,70 @@ class ElearningTest extends TestCase
         } finally {
             putenv('SUARA_DIR');
         }
+    }
+
+    public function test_soal_hari_ini_sama_sepanjang_hari_dan_berganti_besok(): void
+    {
+        $anak = $this->anakBudiDiKelas($this->kelasRina());
+        $this->travelTo('2026-10-26 08:00:00');
+        $pagi = SoalHarian::untuk($anak);
+        $this->travelTo('2026-10-26 20:00:00');
+        $this->assertSame($pagi, SoalHarian::untuk($anak));
+        $this->assertCount(4, $pagi);
+        $this->assertSame(['kuis', 'hitung', 'cocok', 'kuis'], array_column($pagi, 'tipe'));
+
+        // Seminggu ke depan: setiap hari soalnya berbeda dari hari sebelumnya
+        $kemarin = $pagi;
+        for ($i = 1; $i <= 7; $i++) {
+            $this->travelTo("2026-10-26 08:00:00");
+            $this->travel($i)->days();
+            $hari = SoalHarian::untuk($anak);
+            $this->assertNotSame(array_column($kemarin, 'data'), array_column($hari, 'data'));
+            foreach ($hari as $soal) {
+                if ($soal['tipe'] === 'kuis') {
+                    $this->assertCount(4, $soal['data']['opsi']);
+                    $this->assertCount(4, array_unique($soal['data']['opsi']));
+                    $this->assertArrayHasKey($soal['data']['benar'], $soal['data']['opsi']);
+                }
+                if ($soal['tipe'] === 'hitung') $this->assertTrue($soal['data']['jumlah'] >= 2 && $soal['data']['jumlah'] <= 10);
+                if ($soal['tipe'] === 'cocok') $this->assertCount(3, $soal['data']['pasangan']);
+            }
+            $kemarin = $hari;
+        }
+
+        $this->actingAs($this->budi())->get(route('belajar.main', $anak))->assertOk()->assertSee('"harian":true', false);
+    }
+
+    public function test_bintang_soal_hari_ini_sekali_per_hari_dan_terjumlah(): void
+    {
+        $anak = $this->anakBudiDiKelas($this->kelasRina());
+        $this->travelTo('2026-10-26 09:00:00');
+        $url = fn ($tgl, $no) => route('belajar.harian', ['siswa' => $anak->id, 'tanggal' => $tgl, 'nomor' => $no]);
+
+        $this->actingAs($this->budi())->postJson($url('2026-10-26', 1))->assertOk()->assertJson(['baru' => true, 'total' => 2]);
+        $this->actingAs($this->budi())->postJson($url('2026-10-26', 1))->assertOk()->assertJson(['baru' => false, 'total' => 2]);
+        $this->actingAs($this->budi())->postJson($url('2026-10-26', 2))->assertOk()->assertJson(['total' => 4]);
+        $this->actingAs($this->budi())->postJson($url('2026-10-26', 9))->assertNotFound();
+        $this->actingAs($this->budi())->postJson($url('2026-10-20', 1))->assertNotFound();
+        $this->actingAs($this->dewi())->postJson($url('2026-10-26', 3))->assertForbidden();
+
+        // Besok: soal baru bisa dikerjakan lagi, bintang kemarin tetap terhitung
+        $this->travelTo('2026-10-27 09:00:00');
+        $this->actingAs($this->budi())->postJson($url('2026-10-27', 1))->assertOk()->assertJson(['baru' => true, 'total' => 6]);
+        $this->actingAs($this->budi())->get(route('belajar.main', $anak))->assertOk()->assertSee('"bintangLama":4', false);
+        $this->assertSame(3, ElearningHarian::count());
+    }
+
+    public function test_soal_hari_ini_bisa_dimatikan_dan_aman_sebelum_database_diperbarui(): void
+    {
+        $anak = $this->anakBudiDiKelas($this->kelasRina());
+        Pengaturan::simpan(['belajar_harian' => '0']);
+        $this->actingAs($this->budi())->get(route('belajar.main', $anak))->assertOk()->assertDontSee('"harian":true', false);
+
+        Pengaturan::simpan(['belajar_harian' => '4']);
+        Schema::drop('elearning_harian');
+        Basisdata::lupakan();
+        $this->actingAs($this->budi())->get(route('belajar.main', $anak))->assertOk()->assertDontSee('"harian":true', false);
+        $this->actingAs($this->budi())->postJson(route('belajar.harian', ['siswa' => $anak->id, 'tanggal' => now()->toDateString(), 'nomor' => 1]))->assertNotFound();
     }
 }

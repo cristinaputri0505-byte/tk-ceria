@@ -167,6 +167,8 @@ class Pengaturan
                 ['group' => 'Ruang Belajar anak'],
                 'belajar_nada' => ['Nada suara pembaca soal', 'pilihan', 'ceria', 'Suara dibuat di server dalam Bahasa Indonesia. Nada lebih tinggi terdengar lebih ceria untuk anak.',
                     array_map(fn ($n) => $n[0], \App\Support\Suara::NADA)],
+                'belajar_harian' => ['Soal Hari Ini (berganti otomatis setiap hari)', 'pilihan', '4', 'Selain tugas dari guru, anak mendapat soal baru setiap hari: tebak gambar, berhitung, mencocokkan, dan tebak suara/huruf.',
+                    \App\Support\SoalHarian::PILIHAN],
                 'belajar_sambutan' => ['Pesan guru di Ruang Belajar', 'text', 'Halo {anak}! Yuk kita bermain dan belajar bersama hari ini! 🌈', 'Dibacakan dengan suara untuk anak. Kode otomatis: {anak} = nama panggilan anak.'],
                 ['group' => 'Judul bagian di Beranda'],
                 'portal_judul_pengumuman' => ['Judul Pengumuman', 'text', 'Pengumuman'],

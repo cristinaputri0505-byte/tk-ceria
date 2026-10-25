@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ElearningHarian;
 use App\Models\ElearningHasil;
 use App\Models\ElearningTugas;
 use App\Models\Siswa;
 use App\Support\Pengaturan;
+use App\Support\SoalHarian;
 use App\Support\Suara;
 use App\Support\Unggah;
 use Illuminate\Http\Request;
@@ -34,6 +36,11 @@ class BelajarController extends Controller
         if ($anak->count() === 1) return redirect()->route('belajar.main', $anak->first());
 
         $bintang = ElearningHasil::whereIn('siswa_id', $anak->pluck('id'))->selectRaw('siswa_id, sum(bintang) as n')->groupBy('siswa_id')->pluck('n', 'siswa_id');
+        if (SoalHarian::aktif()) {
+            foreach (ElearningHarian::whereIn('siswa_id', $anak->pluck('id'))->selectRaw('siswa_id, sum(bintang) as n')->groupBy('siswa_id')->pluck('n', 'siswa_id') as $id => $n) {
+                $bintang[$id] = (int) ($bintang[$id] ?? 0) + (int) $n;
+            }
+        }
 
         return view('belajar.pilih', compact('anak', 'bintang'));
     }
@@ -46,14 +53,31 @@ class BelajarController extends Controller
         $tugas = ElearningTugas::untukKelas($siswa->kelas_id)->where('aktif', true)->orderBy('urutan')->latest('id')->get();
         $hasil = ElearningHasil::where('siswa_id', $siswa->id)->whereIn('tugas_id', $tugas->pluck('id'))->get()->keyBy('tugas_id');
 
+        // Soal Hari Ini: berganti otomatis setiap hari, tampil paling atas.
+        $harian = [];
+        $hasilHarian = [];
+        $bintangLama = 0;
+        if (SoalHarian::aktif()) {
+            $hari = SoalHarian::hariIni();
+            foreach (SoalHarian::untuk($siswa, $hari) as $i => $soal) {
+                $harian[] = $soal + ['kirim' => route('belajar.harian', ['siswa' => $siswa->id, 'tanggal' => $hari, 'nomor' => $i + 1])];
+            }
+            $semua = ElearningHarian::where('siswa_id', $siswa->id)->get(['tanggal', 'nomor', 'bintang']);
+            foreach ($semua as $h) {
+                if (substr((string) $h->tanggal, 0, 10) === $hari) $hasilHarian['h' . $h->nomor] = ['selesai' => true, 'bintang' => $h->bintang, 'gambar' => null];
+                else $bintangLama += $h->bintang;
+            }
+        }
+
         return view('belajar.main', [
             'siswa' => $siswa->load('kelas.wali'),
             'semuaAnak' => $request->user()->anak()->orderBy('nama')->get(),
             'muatan' => [
                 'anak' => ['id' => $siswa->id, 'nama' => $siswa->nama_panggilan, 'foto' => $siswa->foto_url, 'inisial' => mb_substr($siswa->nama, 0, 1)],
                 'sambutan' => Pengaturan::isi('belajar_sambutan', ['{anak}' => $siswa->nama_panggilan]),
-                'tugas' => $tugas->map->untukPemain()->values(),
-                'hasil' => $hasil->map(fn ($h) => ['selesai' => (bool) $h->selesai_pada, 'bintang' => $h->bintang, 'gambar' => $h->gambar_url])->all(),
+                'tugas' => array_merge($harian, $tugas->map->untukPemain()->values()->all()),
+                'hasil' => (object) ($hasilHarian + $hasil->map(fn ($h) => ['selesai' => (bool) $h->selesai_pada, 'bintang' => $h->bintang, 'gambar' => $h->gambar_url])->all()),
+                'bintangLama' => $bintangLama,
                 'kirim' => str_replace('999999999', '__ID__', route('belajar.selesai', ['siswa' => $siswa->id, 'tugas' => 999999999])),
                 'suara' => Suara::tersedia() ? route('belajar.suara') : null,
                 'csrf' => csrf_token(),
@@ -99,9 +123,37 @@ class BelajarController extends Controller
             'ok' => true,
             'baru' => $baru,
             'bintang' => $tugas->bintang,
-            'total' => (int) ElearningHasil::where('siswa_id', $siswa->id)->sum('bintang'),
+            'total' => $this->totalBintang($siswa),
             'gambar' => $hasil->gambar_url,
         ]);
+    }
+
+    /** Dipanggil saat anak menyelesaikan "Soal Hari Ini". Bintang dihitung sekali per soal per hari. */
+    public function selesaiHarian(Request $request, Siswa $siswa, string $tanggal, int $nomor)
+    {
+        $this->cekFitur();
+        $this->pastikanAnak($request, $siswa);
+        abort_unless(SoalHarian::aktif(), 404);
+        // Hari ini, atau kemarin bila halaman dibuka sebelum tengah malam lalu dikerjakan sesudahnya.
+        abort_unless(in_array($tanggal, [SoalHarian::hariIni(), now()->subDay()->toDateString()], true), 404);
+        abort_unless($nomor >= 1 && $nomor <= count(SoalHarian::untuk($siswa, $tanggal)), 404);
+
+        $hasil = ElearningHarian::where(['siswa_id' => $siswa->id, 'tanggal' => $tanggal, 'nomor' => $nomor])->first();
+        $baru = ! $hasil;
+        if ($baru) {
+            ElearningHarian::create(['siswa_id' => $siswa->id, 'tanggal' => $tanggal, 'nomor' => $nomor, 'bintang' => SoalHarian::BINTANG]);
+        } else {
+            $hasil->increment('dimainkan');
+        }
+
+        return response()->json(['ok' => true, 'baru' => $baru, 'bintang' => SoalHarian::BINTANG, 'total' => $this->totalBintang($siswa), 'gambar' => null]);
+    }
+
+    private function totalBintang(Siswa $siswa): int
+    {
+        $n = (int) ElearningHasil::where('siswa_id', $siswa->id)->sum('bintang');
+
+        return SoalHarian::aktif() ? $n + (int) ElearningHarian::where('siswa_id', $siswa->id)->sum('bintang') : $n;
     }
 
     /** Suara Bahasa Indonesia dari server (WAV). 503 bila server tidak punya mesin suara. */
