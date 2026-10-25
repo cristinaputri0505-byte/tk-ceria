@@ -6,6 +6,7 @@ use App\Models\ElearningHasil;
 use App\Models\ElearningTugas;
 use App\Models\Siswa;
 use App\Support\Pengaturan;
+use App\Support\Suara;
 use App\Support\Unggah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -53,7 +54,8 @@ class BelajarController extends Controller
                 'sambutan' => Pengaturan::isi('belajar_sambutan', ['{anak}' => $siswa->nama_panggilan]),
                 'tugas' => $tugas->map->untukPemain()->values(),
                 'hasil' => $hasil->map(fn ($h) => ['selesai' => (bool) $h->selesai_pada, 'bintang' => $h->bintang, 'gambar' => $h->gambar_url])->all(),
-                'kirim' => route('belajar.selesai', ['siswa' => $siswa->id, 'tugas' => '__ID__']),
+                'kirim' => str_replace('999999999', '__ID__', route('belajar.selesai', ['siswa' => $siswa->id, 'tugas' => 999999999])),
+                'suara' => Suara::tersedia() ? route('belajar.suara') : null,
                 'csrf' => csrf_token(),
             ],
         ]);
@@ -99,6 +101,22 @@ class BelajarController extends Controller
             'bintang' => $tugas->bintang,
             'total' => (int) ElearningHasil::where('siswa_id', $siswa->id)->sum('bintang'),
             'gambar' => $hasil->gambar_url,
+        ]);
+    }
+
+    /** Suara Bahasa Indonesia dari server (WAV). 503 bila server tidak punya mesin suara. */
+    public function suara(Request $request)
+    {
+        $this->cekFitur();
+        $request->validate(['teks' => 'required|string|max:600']);
+
+        $wav = Suara::buat((string) $request->query('teks'));
+        if ($wav === null) return response()->json(['ok' => false], 503);
+
+        return response($wav, 200, [
+            'Content-Type' => 'audio/wav',
+            'Content-Length' => strlen($wav),
+            'Cache-Control' => 'private, max-age=604800',
         ]);
     }
 

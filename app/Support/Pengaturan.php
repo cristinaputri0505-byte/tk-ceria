@@ -165,6 +165,8 @@ class Pengaturan
                 'portal_fitur_dokumentasi' => ['Dokumentasi foto', 'toggle', '1'],
                 'portal_fitur_belajar' => ['Ruang Belajar anak (e-learning)', 'toggle', '1'],
                 ['group' => 'Ruang Belajar anak'],
+                'belajar_nada' => ['Nada suara pembaca soal', 'pilihan', 'ceria', 'Suara dibuat di server dalam Bahasa Indonesia. Nada lebih tinggi terdengar lebih ceria untuk anak.',
+                    array_map(fn ($n) => $n[0], \App\Support\Suara::NADA)],
                 'belajar_sambutan' => ['Pesan guru di Ruang Belajar', 'text', 'Halo {anak}! Yuk kita bermain dan belajar bersama hari ini! 🌈', 'Dibacakan dengan suara untuk anak. Kode otomatis: {anak} = nama panggilan anak.'],
                 ['group' => 'Judul bagian di Beranda'],
                 'portal_judul_pengumuman' => ['Judul Pengumuman', 'text', 'Pengumuman'],

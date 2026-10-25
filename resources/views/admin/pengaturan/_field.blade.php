@@ -44,6 +44,10 @@
                 @foreach (\App\Support\Pengaturan::IKON as $ik => $nama)<option value="{{ $ik }}" @selected($val === $ik)>{{ $nama }}</option>@endforeach
             </select>
         </div>
+    @elseif ($tipe === 'pilihan')
+        <select id="f_{{ $key }}" name="{{ $key }}" class="w-full rounded-xl border {{ $err }} bg-white px-4 py-2.5 text-sm focus:border-sky outline-none">
+            @foreach ($f[4] ?? [] as $kode => $teks)<option value="{{ $kode }}" @selected((string) $val === (string) $kode)>{{ $teks }}</option>@endforeach
+        </select>
     @else
         <input id="f_{{ $key }}" name="{{ $key }}" type="{{ $tipe === 'url' ? 'url' : 'text' }}" value="{{ $val }}" @if($tipe === 'url') placeholder="https://" @endif
             class="w-full rounded-xl border {{ $err }} px-4 py-2.5 text-sm focus:border-sky focus:ring-2 focus:ring-sky/20 outline-none">

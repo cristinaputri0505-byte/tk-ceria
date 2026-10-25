@@ -30,8 +30,10 @@ class PengaturanController extends Controller
         abort_if(empty($fields), 404);
 
         $rules = [];
-        foreach ($fields as $key => [, $tipe]) {
+        foreach ($fields as $key => $f) {
+            $tipe = $f[1];
             $rules[$key] = match ($tipe) {
+                'pilihan' => 'nullable|in:' . implode(',', array_keys($f[4] ?? [])),
                 'image' => 'nullable|image|max:4096',
                 'url' => 'nullable|url|max:255',
                 'textarea', 'lines', 'embed' => 'nullable|string|max:3000',

@@ -214,4 +214,40 @@ class ElearningTest extends TestCase
         $this->actingAs($this->budi())->get(route('belajar.index'))->assertNotFound();
         $this->actingAs($this->admin())->delete(route('admin.siswa.destroy', Siswa::firstOrFail()))->assertRedirect();
     }
+
+    public function test_suara_server_hanya_untuk_orang_tua_dan_aman_bila_mesin_tidak_ada(): void
+    {
+        $url = route('belajar.suara', ['teks' => 'Halo anak hebat']);
+        auth()->logout();
+        $this->get($url)->assertRedirect(route('login'));
+        $this->actingAs($this->dewi())->get(route('belajar.suara'))->assertSessionHasErrors('teks');
+
+        putenv('SUARA_DIR=' . sys_get_temp_dir() . '/tidak-ada-mesin-suara');
+        try {
+            $this->assertFalse(\App\Support\Suara::tersedia());
+            $this->actingAs($this->dewi())->get($url)->assertStatus(503);
+            // Halaman tetap berjalan: memakai suara browser
+            $anak = $this->anakBudiDiKelas($this->kelasRina());
+            $this->actingAs($this->budi())->get(route('belajar.main', $anak))->assertOk()->assertSee('"suara":null', false);
+        } finally {
+            putenv('SUARA_DIR');
+        }
+
+        $this->assertSame('Ayo hitung apel! 5', \App\Support\Suara::bersihkan('🍎 Ayo hitung 🍎 apel! 5 ✨'));
+    }
+
+    public function test_suara_server_menghasilkan_wav_bila_mesin_tersedia(): void
+    {
+        $dir = getenv('SUARA_UJI_DIR');
+        if (! $dir || ! is_dir($dir)) $this->markTestSkipped('Mesin suara tidak ada di komputer ini (normal di laptop; tersedia di server Vercel).');
+
+        putenv('SUARA_DIR=' . $dir);
+        try {
+            $res = $this->actingAs($this->budi())->get(route('belajar.suara', ['teks' => 'Ada berapa buah apel?']))->assertOk();
+            $this->assertSame('audio/wav', $res->headers->get('Content-Type'));
+            $this->assertStringStartsWith('RIFF', $res->getContent());
+        } finally {
+            putenv('SUARA_DIR');
+        }
+    }
 }

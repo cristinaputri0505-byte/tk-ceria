@@ -54,8 +54,9 @@ Route::middleware(['auth', 'role:admin,guru'])->prefix('elearning')->name('elear
 /* Ruang Belajar anak: dibuka lewat akun orang tua */
 Route::middleware(['auth', 'role:orangtua'])->prefix('belajar')->name('belajar.')->group(function () {
     Route::get('/', [BelajarController::class, 'index'])->name('index');
-    Route::get('{siswa}', [BelajarController::class, 'main'])->name('main');
-    Route::post('{siswa}/tugas/{tugas}/selesai', [BelajarController::class, 'selesai'])->middleware('throttle:60,1')->name('selesai');
+    Route::get('suara', [BelajarController::class, 'suara'])->middleware('throttle:150,1')->name('suara');
+    Route::get('{siswa}', [BelajarController::class, 'main'])->whereNumber('siswa')->name('main');
+    Route::post('{siswa}/tugas/{tugas}/selesai', [BelajarController::class, 'selesai'])->whereNumber(['siswa', 'tugas'])->middleware('throttle:60,1')->name('selesai');
 });
 
 /* Karya gambar anak (privat; hak akses dicek di controller) */

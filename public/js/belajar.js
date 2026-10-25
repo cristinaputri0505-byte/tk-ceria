@@ -23,6 +23,13 @@
     };
     var $ = function (id) { return document.getElementById(id); };
 
+    /* Kalimat ceria untuk anak (dibacakan dengan suara) */
+    var ANGKA = ['', 'Satu!', 'Dua!', 'Tiga!', 'Empat!', 'Lima!', 'Enam!', 'Tujuh!', 'Delapan!', 'Sembilan!', 'Sepuluh!',
+                 'Sebelas!', 'Dua belas!', 'Tiga belas!', 'Empat belas!', 'Lima belas!'];
+    var SALAH = ['Hmm, belum tepat nih. Ayo coba lagi, kamu pasti bisa!', 'Ups! Hampir benar. Coba sekali lagi, yuk!', 'Wah, belum pas. Ayo pilih yang lain ya!'];
+    var COCOK = ['Cocok!', 'Pintar!', 'Yeay, benar!', 'Hebat!'];
+    var acak = function (daftar) { return daftar[Math.floor(Math.random() * daftar.length)]; };
+
     /* ---------- Pembuat elemen yang aman (tanpa innerHTML untuk teks guru) ---------- */
     function h(tag, kelas, isi, attr) {
         var el = document.createElement(tag);
@@ -60,40 +67,64 @@
         } catch (e) { /* browser memblokir audio sebelum ada sentuhan: abaikan */ }
     }
 
-    /* Pilih suara Bahasa Indonesia yang terpasang di perangkat. Tanpa ini, browser sering memakai
-       suara bawaan berbahasa Inggris sehingga soal dibacakan dengan logat Inggris. */
-    var suaraID = null, suaraSudahDicek = false;
+    /* Suara Bahasa Indonesia:
+       1. Dari SERVER website (Piper / espeak-ng): pasti berbahasa Indonesia, tanpa pengaturan di HP.
+       2. Cadangan bila server tidak bisa: suara browser, dengan memilih suara Indonesia bila ada. */
+    var suaraID = null;
     function muatSuara() {
         if (!('speechSynthesis' in window)) return;
         var semua = window.speechSynthesis.getVoices();
-        if (!semua.length) return; // daftar suara belum siap, tunggu onvoiceschanged
         var cari = function (uji) { for (var i = 0; i < semua.length; i++) if (uji(semua[i])) return semua[i]; return null; };
-        suaraID = cari(function (v) { return /^id([-_]|$)/i.test(v.lang) && /google/i.test(v.name); }) // suara Google biasanya paling jelas
+        suaraID = cari(function (v) { return /^id([-_]|$)/i.test(v.lang) && /google/i.test(v.name); })
             || cari(function (v) { return /^id([-_]|$)/i.test(v.lang); })
             || cari(function (v) { return /indonesia/i.test(v.name); })
-            || cari(function (v) { return /^ms([-_]|$)/i.test(v.lang); });          // Melayu: masih mirip bila Indonesia tidak ada
-        if (!suaraSudahDicek) {
-            suaraSudahDicek = true;
-            var info = document.getElementById('info-suara');
-            if (info && !(suaraID && /^id/i.test(suaraID.lang))) info.classList.remove('hidden');
-        }
+            || cari(function (v) { return /^ms([-_]|$)/i.test(v.lang); });
     }
-    if ('speechSynthesis' in window) {
-        muatSuara();
-        window.speechSynthesis.onvoiceschanged = muatSuara;
+    if ('speechSynthesis' in window) { muatSuara(); window.speechSynthesis.onvoiceschanged = muatSuara; }
+
+    function bersihkanTeks(teks) {
+        // Emoji tidak dibacakan agar suara tidak menyebut nama simbol
+        return String(teks || '').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}\u{20E3}]/gu, ' ').replace(/\s+/g, ' ').trim();
     }
 
-    function bicara(teks) {
-        if (!('speechSynthesis' in window) || !teks) return;
-        window.speechSynthesis.cancel();
+    function suaraBrowser(teks) {
+        if (!('speechSynthesis' in window)) return;
         if (!suaraID) muatSuara();
-        // Emoji tidak dibacakan agar suara tidak menyebut nama simbol
-        var bersih = String(teks).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, ' ').replace(/\s+/g, ' ').trim();
-        var u = new SpeechSynthesisUtterance(bersih);
+        var u = new SpeechSynthesisUtterance(teks);
         if (suaraID) u.voice = suaraID;
         u.lang = suaraID ? suaraID.lang : 'id-ID';
         u.rate = 0.92; u.pitch = 1.15;
         window.speechSynthesis.speak(u);
+    }
+
+    var pemutar = new Audio();
+    pemutar.preload = 'auto';
+    var serverBisa = !!D.suara;   // menjadi false bila server gagal, agar tidak mencoba terus
+    var giliran = 0;
+
+    function diam() {
+        giliran++;
+        try { pemutar.pause(); } catch (e) {}
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    }
+
+    function bicara(teks) {
+        var bersih = bersihkanTeks(teks);
+        diam();
+        if (!bersih) return;
+        if (!serverBisa) return suaraBrowser(bersih);
+
+        var ini = giliran;
+        var cadangan = function () {
+            if (ini !== giliran) return;   // sudah diganti ucapan lain
+            serverBisa = false;
+            suaraBrowser(bersih);
+        };
+        pemutar.onerror = cadangan;
+        pemutar.src = D.suara + '?teks=' + encodeURIComponent(bersih.slice(0, 300));
+        // play() dipanggil langsung saat disentuh agar diizinkan browser HP (termasuk iPhone)
+        var janji = pemutar.play();
+        if (janji && janji.catch) janji.catch(function (e) { if (e && e.name !== 'AbortError') cadangan(); });
     }
 
     /* ---------- Konfeti sederhana (tanpa pustaka luar) ---------- */
@@ -230,12 +261,12 @@
         ({ kuis: mainKuis, hitung: mainHitung, cocok: mainCocok, gambar: mainGambar }[t.tipe] || function () {})(t, area);
         segarkanIkon();
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(function () { bicara(t.judul + '. ' + t.instruksi); }, 300);
+        bicara(t.judul + '. ' + t.instruksi);
     }
 
     function tutup(diam) {
         if (!diam) bunyi('klik');
-        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        diam();
         tugasAktif = null;
         $('pemain').classList.add('hidden');
         $('daftar-tugas').classList.remove('hidden');
@@ -260,8 +291,8 @@
         (d.opsi || []).forEach(function (opsi, i) {
             var b = h('button', 'btn-3d ' + warna[i % 4] + ' text-white p-5 rounded-3xl font-bold text-xl md:text-2xl flex items-center justify-center min-h-[90px]', opsi, { type: 'button' });
             b.onclick = function () {
-                if (i === Number(d.benar)) { bunyi('benar'); umpan(fb, '🎉 Hore! Jawabanmu benar!', true); selesai(); }
-                else { bunyi('salah'); goyang(b); umpan(fb, '🤔 Belum tepat, coba pilih yang lain ya!', false); bicara('Belum tepat. Ayo coba lagi ya!'); }
+                if (i === Number(d.benar)) { bunyi('benar'); umpan(fb, '🎉 Yeay! Jawabanmu benar!', true); selesai(); }
+                else { bunyi('salah'); goyang(b); umpan(fb, '🙈 Hmm, belum tepat nih. Coba lagi, kamu pasti bisa!', false); bicara(acak(SALAH)); }
             };
             grid.appendChild(b);
         });
@@ -286,7 +317,7 @@
                 lencana.textContent = urut;
                 lencana.classList.remove('hidden');
                 b.classList.add('border-pink-400', 'bg-pink-50');
-                bicara(String(urut));
+                bicara(ANGKA[urut] || String(urut));
             };
             benda.appendChild(b);
         })();
@@ -304,8 +335,8 @@
         pilihan.forEach(function (angka, i) {
             var b = h('button', 'btn-3d ' + warna[i] + ' text-white py-5 rounded-3xl font-bold text-3xl md:text-4xl', angka, { type: 'button' });
             b.onclick = function () {
-                if (angka === n) { bunyi('benar'); umpan(fb, '🎉 Pintar! Jumlahnya ada ' + n + '!', true); selesai(); }
-                else { bunyi('salah'); goyang(b); umpan(fb, '🤔 Belum tepat, ayo hitung sekali lagi pelan-pelan!', false); bicara('Ayo kita hitung sekali lagi ya!'); }
+                if (angka === n) { bunyi('benar'); umpan(fb, '🎉 Pintar sekali! Jumlahnya ada ' + n + '!', true); selesai(); }
+                else { bunyi('salah'); goyang(b); umpan(fb, '🙈 Ups! Yuk, hitung pelan-pelan sekali lagi!', false); bicara('Ups! Yuk, kita hitung pelan-pelan sekali lagi!'); }
             };
             tombol.appendChild(b);
         });
@@ -345,9 +376,9 @@
                     if (sudah) return;
                     if (pilihKiri === null) { bunyi('salah'); umpan(fb, '👆 Pilih dulu kotak di sebelah KIRI ya!', false); return; }
                     if (pilihKiri === item.i) {
-                        bunyi('benar'); cocok.push(item.i); pilihKiri = null; umpan(fb, '👍 Cocok!', true); gambarPapan();
+                        bunyi('benar'); cocok.push(item.i); pilihKiri = null; umpan(fb, '👍 Cocok! Pintar!', true); bicara(acak(COCOK)); gambarPapan();
                         if (cocok.length >= pasangan.length) setTimeout(selesai, 350);
-                    } else { bunyi('salah'); goyang(b); umpan(fb, '🤔 Pasangannya kurang tepat. Coba lagi yuk!', false); }
+                    } else { bunyi('salah'); goyang(b); umpan(fb, '🙈 Ups, bukan pasangannya. Coba lagi yuk!', false); bicara(acak(SALAH)); }
                 };
                 kolKanan.appendChild(b);
             });
@@ -495,9 +526,11 @@
         $('hore-nama').textContent = 'Hebat sekali, ' + (D.anak.nama || 'kamu') + '!';
         $('hore-bintang').textContent = bintangBaru ? '+' + t.bintang + ' Bintang!' : 'Bintangmu sudah tersimpan ⭐';
         $('jendela-hore').classList.remove('hidden');
+        var nama = D.anak.nama || '';
+        var jumlah = (ANGKA[t.bintang] || String(t.bintang)).replace('!', '').toLowerCase();
         bicara(bintangBaru
-            ? 'Hore! Hebat sekali ' + D.anak.nama + ', kamu mendapat ' + t.bintang + ' bintang!'
-            : 'Hore! Hebat sekali ' + D.anak.nama + '!');
+            ? 'Yeay! Hebat sekali, ' + nama + '! Kamu dapat ' + jumlah + ' bintang! Tepuk tangan dulu, yuk!'
+            : acak(['Yeay! Kamu hebat, ' + nama + '!', 'Hore! Pintar sekali, ' + nama + '!', 'Keren! Kamu berhasil lagi, ' + nama + '!']));
     }
 
     function lihatKarya(t, url) {
@@ -519,7 +552,6 @@
             case 'tutup': tutup(); break;
             case 'lanjut': bunyi('klik'); $('jendela-hore').classList.add('hidden'); tutup(true); break;
             case 'tutup-karya': bunyi('klik'); $('jendela-karya').classList.add('hidden'); break;
-            case 'tutup-info-suara': $('info-suara').classList.add('hidden'); break;
         }
     });
     document.addEventListener('keydown', function (e) {
