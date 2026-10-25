@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\ResetPasswordController;
+use App\Http\Controllers\BelajarController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ElearningController;
 use App\Http\Controllers\LupaPasswordController;
 use App\Http\Controllers\NotifikasiController;
 use Illuminate\Support\Facades\Route;
@@ -37,3 +39,24 @@ Route::middleware(['auth', 'role:admin,orangtua'])->prefix('chat')->name('chat.'
     Route::get('grup/data', [ChatController::class, 'grupData'])->name('grup.data');
     Route::post('grup', [ChatController::class, 'grupKirim'])->middleware('throttle:40,1')->name('grup.kirim');
 });
+
+/* E-Learning: guru (kelasnya) & admin (semua kelas) mengelola tugas interaktif */
+Route::middleware(['auth', 'role:admin,guru'])->prefix('elearning')->name('elearning.')->group(function () {
+    Route::get('/', [ElearningController::class, 'index'])->name('index');
+    Route::get('rekap', [ElearningController::class, 'rekap'])->name('rekap');
+    Route::get('tugas/baru', [ElearningController::class, 'create'])->name('create');
+    Route::post('tugas', [ElearningController::class, 'store'])->name('store');
+    Route::get('tugas/{tugas}/ubah', [ElearningController::class, 'edit'])->name('edit');
+    Route::put('tugas/{tugas}', [ElearningController::class, 'update'])->name('update');
+    Route::delete('tugas/{tugas}', [ElearningController::class, 'destroy'])->name('destroy');
+});
+
+/* Ruang Belajar anak: dibuka lewat akun orang tua */
+Route::middleware(['auth', 'role:orangtua'])->prefix('belajar')->name('belajar.')->group(function () {
+    Route::get('/', [BelajarController::class, 'index'])->name('index');
+    Route::get('{siswa}', [BelajarController::class, 'main'])->name('main');
+    Route::post('{siswa}/tugas/{tugas}/selesai', [BelajarController::class, 'selesai'])->middleware('throttle:60,1')->name('selesai');
+});
+
+/* Karya gambar anak (privat; hak akses dicek di controller) */
+Route::get('berkas/karya/{hasil}', [ElearningController::class, 'karya'])->middleware('auth')->name('belajar.karya');

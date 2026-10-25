@@ -19,6 +19,7 @@
             ['Kelas', 'admin.kelas.index', 'school', 'admin.kelas.*'],
             ['Absensi', 'admin.absensi.index', 'calendar-check', 'admin.absensi.*'],
             ['Perkembangan', 'admin.perkembangan.index', 'sprout', 'admin.perkembangan.*'],
+            ['E-Learning Anak', 'elearning.index', 'gamepad-2', 'elearning.*'],
             ['Akun Pengguna', 'admin.pengguna.index', 'key-round', 'admin.pengguna.*'],
             ['Reset Password', 'admin.reset.index', 'lock-keyhole', 'admin.reset.*'],
             ['group' => 'Portal Orang Tua'],
@@ -44,6 +45,7 @@
             ['Absensi', 'guru.absensi.index', 'calendar-check', 'guru.absensi.*'],
             ['Laporan Perkembangan', 'guru.perkembangan.index', 'sprout', 'guru.perkembangan.*'],
             ['Dokumentasi Kelas', 'guru.dokumentasi.index', 'camera', 'guru.dokumentasi.*'],
+            ['E-Learning Anak', 'elearning.index', 'gamepad-2', 'elearning.*'],
         ],
         default => [
             ['Beranda', 'orangtua.dashboard', 'house', 'orangtua.dashboard'],
@@ -54,6 +56,7 @@
                 \App\Support\Pengaturan::fitur('pembayaran') ? ['Pembayaran', 'orangtua.pembayaran', 'wallet', 'orangtua.pembayaran'] : null,
                 \App\Support\Pengaturan::fitur('pengumuman') ? ['Pengumuman', 'orangtua.pengumuman', 'megaphone', 'orangtua.pengumuman'] : null,
                 \App\Support\Pengaturan::fitur('dokumentasi') ? ['Dokumentasi', 'orangtua.dokumentasi', 'camera', 'orangtua.dokumentasi'] : null,
+                \App\Support\Pengaturan::fitur('belajar') && \App\Models\ElearningTugas::aktifDiDatabase() ? ['Ruang Belajar Anak', 'belajar.index', 'gamepad-2', 'belajar.*'] : null,
             ])),
             ['Profil Saya', 'orangtua.profil', 'user-round', 'orangtua.profil'],
             ['group' => 'Komunikasi'],

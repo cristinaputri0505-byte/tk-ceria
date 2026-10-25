@@ -123,6 +123,7 @@
                 <a href="{{ route('orangtua.anak', $a) }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-extrabold px-4 py-2.5 rounded-xl hover:bg-sky-dark"><i data-lucide="id-card" class="w-4 h-4"></i> Profil lengkap</a>
                 @if ($f('kehadiran'))<a href="{{ route('orangtua.anak', [$a, 'tab' => 'kehadiran']) }}" class="inline-flex items-center gap-2 bg-cloud text-navy text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-sky-soft"><i data-lucide="calendar-check" class="w-4 h-4"></i> Kehadiran</a>@endif
                 @if ($f('rapor'))<a href="{{ route('orangtua.anak', [$a, 'tab' => 'rapor']) }}" class="inline-flex items-center gap-2 bg-cloud text-navy text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-sky-soft"><i data-lucide="sprout" class="w-4 h-4"></i> Rapor</a>@endif
+                @if ($f('belajar') && \App\Models\ElearningTugas::aktifDiDatabase())<a href="{{ route('belajar.main', $a) }}" class="inline-flex items-center gap-2 bg-sun text-navy text-sm font-extrabold px-4 py-2.5 rounded-xl hover:bg-sun/80"><i data-lucide="gamepad-2" class="w-4 h-4"></i> Ayo Belajar</a>@endif
             </div>
         </article>
     @empty

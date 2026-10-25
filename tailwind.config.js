@@ -6,6 +6,7 @@ export default {
     content: [
         './resources/views/**/*.blade.php',
         './app/**/*.php', // class warna yang disusun di PHP (Program, Notifikasi, dll.)
+        './public/js/belajar.js', // class yang disusun di JavaScript Ruang Belajar
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     ],
     theme: {

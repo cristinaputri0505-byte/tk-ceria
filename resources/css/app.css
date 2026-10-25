@@ -10,3 +10,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===== Ruang Belajar anak (resources/views/belajar, public/js/belajar.js) ===== */
+@layer components {
+    body.belajar {
+        background-color: #fffdf7;
+        background-image: radial-gradient(#ffe5ec 2px, transparent 2px), radial-gradient(#e0f4ff 2px, #fffdf7 2px);
+        background-size: 40px 40px;
+        background-position: 0 0, 20px 20px;
+        -webkit-user-select: none;
+        user-select: none;
+        overflow-x: hidden;
+    }
+    .btn-3d { position: relative; top: 0; transition: all .15s ease; }
+    .btn-3d:active { top: 5px; box-shadow: none !important; }
+    .btn-3d:disabled { opacity: .6; }
+    .btn-pink { background-color: #ff85a1; box-shadow: 0 6px 0 0 #d85b79; }
+    .btn-blue { background-color: #4cc9f0; box-shadow: 0 6px 0 0 #3196b8; }
+    .btn-green { background-color: #06d6a0; box-shadow: 0 6px 0 0 #049e76; }
+    .btn-yellow { background-color: #ffd166; box-shadow: 0 6px 0 0 #d9a836; }
+    .btn-purple { background-color: #9b5de5; box-shadow: 0 6px 0 0 #7339b8; }
+    .btn-orange { background-color: #ff9f1c; box-shadow: 0 6px 0 0 #cc7a08; }
+    .btn-white { background-color: #fff; box-shadow: 0 6px 0 0 #cbd5e1; border: 2px solid #e2e8f0; }
+    .belajar-float { display: inline-block; animation: belajar-float 3s ease-in-out infinite; }
+    .belajar-shake { animation: belajar-shake .4s ease-in-out; }
+    .belajar-pop { animation: belajar-pop .3s cubic-bezier(.175, .885, .32, 1.275) both; }
+    @keyframes belajar-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes belajar-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px) rotate(-3deg); } 75% { transform: translateX(10px) rotate(3deg); } }
+    @keyframes belajar-pop { 0% { transform: scale(.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+}
+

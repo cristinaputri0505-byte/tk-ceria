@@ -52,6 +52,7 @@ class SiswaController extends Controller
         $file = collect([$siswa->foto])
             ->merge($siswa->tagihan()->whereNotNull('bukti')->pluck('bukti'))
             ->merge(Dokumentasi::where('siswa_id', $siswa->id)->pluck('gambar'))
+            ->merge(\App\Models\ElearningTugas::aktifDiDatabase() ? \App\Models\ElearningHasil::where('siswa_id', $siswa->id)->whereNotNull('gambar')->pluck('gambar') : [])
             ->filter()->values()->all();
         Unggah::hapus($file, 'local');
         $siswa->delete();
