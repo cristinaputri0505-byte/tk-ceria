@@ -138,7 +138,11 @@
                 <span id="hore-bintang" class="block text-2xl font-bold text-yellow-600"></span>
             </span>
         </div>
-        <button type="button" data-aksi="lanjut" class="btn-3d btn-green text-white w-full py-3.5 rounded-2xl font-bold text-xl">Lanjut Bermain! 😄</button>
+        <button type="button" id="hore-berikut" data-aksi="berikutnya" class="btn-3d btn-green text-white w-full py-3.5 rounded-2xl font-bold text-xl flex items-center justify-center gap-2">
+            <span>Soal Berikutnya</span><span aria-hidden="true">➡️</span>
+        </button>
+        <p id="hore-berikut-teks" class="text-sm text-slate-500 font-semibold mt-2"></p>
+        <button type="button" id="hore-kembali" data-aksi="lanjut" class="btn-3d btn-white text-slate-700 w-full py-3 rounded-2xl font-bold text-base mt-3">🏠 Kembali ke daftar soal</button>
     </div>
 </div>
 

@@ -264,8 +264,8 @@
         bicara(t.judul + '. ' + t.instruksi);
     }
 
-    function tutup(diam) {
-        if (!diam) bunyi('klik');
+    function tutup(senyap) {
+        if (!senyap) bunyi('klik');
         diam();
         tugasAktif = null;
         $('pemain').classList.add('hidden');
@@ -525,12 +525,26 @@
         konfeti();
         $('hore-nama').textContent = 'Hebat sekali, ' + (D.anak.nama || 'kamu') + '!';
         $('hore-bintang').textContent = bintangBaru ? '+' + t.bintang + ' Bintang!' : 'Bintangmu sudah tersimpan ⭐';
+        var lanjut = tugasBerikutnya(t);
+        $('hore-berikut').classList.toggle('hidden', !lanjut);
+        $('hore-berikut-teks').textContent = lanjut ? 'Berikutnya: ' + (lanjut.ikon || '🌟') + ' ' + lanjut.judul : '';
+        $('hore-kembali').textContent = lanjut ? '🏠 Kembali ke daftar soal' : '🏠 Semua soal selesai! Kembali';
         $('jendela-hore').classList.remove('hidden');
         var nama = D.anak.nama || '';
         var jumlah = (ANGKA[t.bintang] || String(t.bintang)).replace('!', '').toLowerCase();
         bicara(bintangBaru
             ? 'Yeay! Hebat sekali, ' + nama + '! Kamu dapat ' + jumlah + ' bintang! Tepuk tangan dulu, yuk!'
             : acak(['Yeay! Kamu hebat, ' + nama + '!', 'Hore! Pintar sekali, ' + nama + '!', 'Keren! Kamu berhasil lagi, ' + nama + '!']));
+    }
+
+    /** Soal berikutnya: yang belum dikerjakan setelah soal ini (urut sesuai daftar), lalu dari awal.
+     *  Bila semua sudah selesai, soal sesudahnya di daftar (untuk main lagi). null bila ini soal terakhir. */
+    function tugasBerikutnya(t) {
+        var daftar = D.tugas.filter(function (x) { return filterAktif === 'semua' || x.tipe === filterAktif; });
+        var i = daftar.indexOf(t);
+        var urut = daftar.slice(i + 1).concat(daftar.slice(0, Math.max(i, 0)));
+        for (var k = 0; k < urut.length; k++) if (!(hasil[urut[k].id] || {}).selesai) return urut[k];
+        return daftar[i + 1] || null;
     }
 
     function lihatKarya(t, url) {
@@ -551,6 +565,11 @@
             case 'bacakan': if (tugasAktif) { bunyi('klik'); bicara(tugasAktif.judul + '. ' + tugasAktif.instruksi); } break;
             case 'tutup': tutup(); break;
             case 'lanjut': bunyi('klik'); $('jendela-hore').classList.add('hidden'); tutup(true); break;
+            case 'berikutnya':
+                var lanjut = tugasAktif && tugasBerikutnya(tugasAktif);
+                $('jendela-hore').classList.add('hidden');
+                if (lanjut) { diam(); mulai(lanjut); } else tutup(true);
+                break;
             case 'tutup-karya': bunyi('klik'); $('jendela-karya').classList.add('hidden'); break;
         }
     });
