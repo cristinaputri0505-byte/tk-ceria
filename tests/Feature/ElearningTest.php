@@ -317,4 +317,30 @@ class ElearningTest extends TestCase
         $this->actingAs($this->budi())->get(route('belajar.main', $anak))->assertOk()->assertDontSee('"harian":true', false);
         $this->actingAs($this->budi())->postJson(route('belajar.harian', ['siswa' => $anak->id, 'tanggal' => now()->toDateString(), 'nomor' => 1]))->assertNotFound();
     }
+
+    public function test_guru_dan_admin_melihat_siswa_yang_sudah_dan_belum_mengerjakan(): void
+    {
+        $anak = $this->anakBudiDiKelas($this->kelasRina());
+        $temanSekelas = Siswa::where('kelas_id', $this->kelasRina()->id)->whereKeyNot($anak->id)->firstOrFail();
+        $anakKelasLain = Siswa::where('kelas_id', $this->kelasLain()->id)->firstOrFail();
+        $tugasKelas = $this->buatTugas($this->kelasRina()->id, ['judul' => 'Tugas Kelas A']);
+        $tugasSemua = $this->buatTugas(null, ['judul' => 'Tugas Bersama']);
+        $this->actingAs($this->budi())->postJson(route('belajar.selesai', [$anak, $tugasKelas]))->assertOk();
+        $this->actingAs($this->budi())->postJson(route('belajar.selesai', [$anak, $tugasSemua]))->assertOk();
+
+        // Daftar tugas: angka "selesai" bisa diklik menuju daftar siswa
+        $this->actingAs($this->rina())->get(route('elearning.index'))->assertOk()->assertSee(route('elearning.hasil', $tugasKelas), false);
+
+        $this->actingAs($this->rina())->get(route('elearning.hasil', $tugasKelas))->assertOk()
+            ->assertSeeInOrder(['Sudah mengerjakan (1)', $anak->nama, 'Belum mengerjakan', $temanSekelas->nama])
+            ->assertDontSee($anakKelasLain->nama);
+
+        // Tugas semua kelas: guru hanya melihat siswa kelasnya, admin melihat semua kelas
+        $this->actingAs($this->rina())->get(route('elearning.hasil', $tugasSemua))->assertOk()->assertSee($anak->nama)->assertDontSee($anakKelasLain->nama);
+        $this->actingAs($this->admin())->get(route('elearning.hasil', $tugasSemua))->assertOk()->assertSee($anak->nama)->assertSee($anakKelasLain->nama);
+
+        // Guru kelas lain tidak boleh melihat tugas khusus kelas A; orang tua tidak boleh sama sekali
+        $this->actingAs($this->u('sari@tkceria.sch.id'))->get(route('elearning.hasil', $tugasKelas))->assertForbidden();
+        $this->actingAs($this->budi())->get(route('elearning.hasil', $tugasKelas))->assertForbidden();
+    }
 }

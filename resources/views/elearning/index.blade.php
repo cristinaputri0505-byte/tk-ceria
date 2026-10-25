@@ -28,7 +28,7 @@
 
 <ul class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
     @forelse ($tugas as $t)
-        @php $siswaKelas = $t->kelas_id ? ($jumlahSiswa[$t->kelas_id] ?? 0) : $jumlahSiswa->sum(); @endphp
+        @php $siswaKelas = $t->kelas_id ? ($jumlahSiswa[$t->kelas_id] ?? 0) : ($lingkup !== null ? $jumlahSiswa->only($lingkup)->sum() : $jumlahSiswa->sum()); @endphp
         <li class="bg-white rounded-3xl border border-slate-100 border-l-8 p-5 flex flex-col gap-3 {{ $t->aktif ? '' : 'opacity-60' }}" style="border-left-color: {{ $warna[$t->warna] ?? $warna['pink'] }}">
             <div class="flex items-start gap-3">
                 <span class="w-14 h-14 shrink-0 rounded-2xl bg-cloud grid place-items-center text-3xl">{{ $t->ikon }}</span>
@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-                <span class="text-xs text-slate-500">{{ $t->kelas?->nama ?? 'Semua kelas' }} · selesai {{ $t->selesai_count }}/{{ $siswaKelas }} anak</span>
+                <span class="text-xs text-slate-500">{{ $t->kelas?->nama ?? 'Semua kelas' }} · selesai <b class="text-navy">{{ $t->selesai_count }}/{{ $siswaKelas }}</b> anak</span>
                 @if ($t->bolehDiubah(auth()->user()))
                     <span class="shrink-0">
                         @include('partials.edit-link', ['href' => route('elearning.edit', $t)])
@@ -51,6 +51,9 @@
                     </span>
                 @endif
             </div>
+            <a href="{{ route('elearning.hasil', [$t, 'kelas_id' => $kelasId]) }}" class="inline-flex items-center justify-center gap-2 w-full rounded-xl border border-slate-200 bg-cloud hover:border-sky hover:text-sky text-navy text-sm font-bold px-4 py-2">
+                <i data-lucide="users" class="w-4 h-4"></i> <span>Lihat siswa yang mengerjakan</span>
+            </a>
         </li>
     @empty
         <li class="col-span-full bg-white rounded-3xl border border-slate-100 p-8 text-center">

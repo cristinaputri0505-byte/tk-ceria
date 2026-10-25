@@ -40,8 +40,12 @@ class ElearningController extends Controller
         $kelasId = $kelasList->firstWhere('id', (int) $request->kelas_id)?->id;
         $isAdmin = $request->user()->role === User::ADMIN;
 
+        // Kelas yang dihitung: kelas yang dipilih, atau semua kelas guru ini (admin: semua).
+        $lingkup = $kelasId ? [$kelasId] : ($isAdmin ? null : $kelasList->pluck('id')->all());
+
         $tugas = ElearningTugas::with('kelas')
-            ->withCount(['hasil as selesai_count' => fn ($q) => $q->whereNotNull('selesai_pada')])
+            ->withCount(['hasil as selesai_count' => fn ($q) => $q->whereNotNull('selesai_pada')
+                ->when($lingkup !== null, fn ($w) => $w->whereHas('siswa', fn ($s) => $s->whereIn('kelas_id', $lingkup)))])
             ->when($kelasId, fn ($q) => $q->untukKelas($kelasId))
             ->when(! $kelasId && ! $isAdmin, fn ($q) => $q->where(fn ($w) => $w->whereNull('kelas_id')->orWhereIn('kelas_id', $kelasList->pluck('id'))))
             ->orderBy('urutan')->latest('id')->get();
@@ -50,6 +54,7 @@ class ElearningController extends Controller
             'tugas' => $tugas,
             'kelasList' => $kelasList,
             'kelasId' => $kelasId,
+            'lingkup' => $lingkup,
             'jumlahSiswa' => \App\Models\Siswa::whereNotNull('kelas_id')->selectRaw('kelas_id, count(*) as n')->groupBy('kelas_id')->pluck('n', 'kelas_id'),
         ]);
     }
@@ -113,6 +118,28 @@ class ElearningController extends Controller
         $hasil = $kelas ? ElearningHasil::whereIn('siswa_id', $siswa->pluck('id'))->whereIn('tugas_id', $tugas->pluck('id'))->get()->groupBy('siswa_id') : collect();
 
         return view('elearning.rekap', compact('kelasList', 'kelas', 'siswa', 'tugas', 'hasil'));
+    }
+
+    /** Daftar siswa untuk satu tugas: siapa yang sudah dan belum mengerjakan. */
+    public function hasil(Request $request, ElearningTugas $tugas)
+    {
+        if ($v = $this->siapAtauPesan()) return $v;
+
+        $kelasBoleh = $this->kelasSaya($request);
+        // Tugas khusus satu kelas: hanya admin atau guru kelas itu. Tugas "semua kelas": tiap guru melihat kelasnya sendiri.
+        $kelasList = $tugas->kelas_id ? $kelasBoleh->where('id', $tugas->kelas_id)->values() : $kelasBoleh;
+        abort_if($kelasList->isEmpty() && $tugas->kelas_id, 403);
+
+        $kelasId = $kelasList->firstWhere('id', (int) $request->kelas_id)?->id;
+        $siswa = \App\Models\Siswa::with('kelas')
+            ->whereIn('kelas_id', $kelasId ? [$kelasId] : $kelasList->pluck('id'))
+            ->orderBy('kelas_id')->orderBy('nama')->get();
+        $hasil = ElearningHasil::where('tugas_id', $tugas->id)->whereIn('siswa_id', $siswa->pluck('id'))->get()->keyBy('siswa_id');
+
+        [$sudah, $belum] = $siswa->partition(fn ($s) => optional($hasil->get($s->id))->selesai_pada !== null);
+        $sudah = $sudah->sortByDesc(fn ($s) => $hasil[$s->id]->selesai_pada)->values();
+
+        return view('elearning.hasil', compact('tugas', 'kelasList', 'kelasId', 'hasil', 'sudah', 'belum'));
     }
 
     /** Karya gambar anak (privat): admin, wali kelasnya, dan orang tuanya. */

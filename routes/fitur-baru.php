@@ -44,6 +44,7 @@ Route::middleware(['auth', 'role:admin,orangtua'])->prefix('chat')->name('chat.'
 Route::middleware(['auth', 'role:admin,guru'])->prefix('elearning')->name('elearning.')->group(function () {
     Route::get('/', [ElearningController::class, 'index'])->name('index');
     Route::get('rekap', [ElearningController::class, 'rekap'])->name('rekap');
+    Route::get('tugas/{tugas}/siswa', [ElearningController::class, 'hasil'])->name('hasil');
     Route::get('tugas/baru', [ElearningController::class, 'create'])->name('create');
     Route::post('tugas', [ElearningController::class, 'store'])->name('store');
     Route::get('tugas/{tugas}/ubah', [ElearningController::class, 'edit'])->name('edit');
