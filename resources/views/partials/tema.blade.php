@@ -130,6 +130,11 @@
     html.dark :is(.bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur) :is(.bg-white, .bg-cloud) :is(.text-navy, .text-ink),
     html.dark :is(.bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur) :is(.bg-white, .bg-cloud):is(.text-navy, .text-ink) { color: #f3eefc; }
 
+    /* Kotak pilihan (sakelar, pilihan jenis) yang sedang aktif */
+    html.dark label:has(:checked).has-\[\:checked\]\:bg-leaf-soft { background-color: #143528; }
+    html.dark label:has(:checked).has-\[\:checked\]\:bg-sky-soft { background-color: #1c2f52; }
+    html.dark .bg-slate-300 { background-color: #4a3f6b; }
+
     /* Pilihan status (Absen cepat) yang sedang dipilih */
     html.dark label:has(:checked).has-\[\:checked\]\:bg-daun { background-color: #3dbe72; color: #2b2140; }
     html.dark label:has(:checked).has-\[\:checked\]\:bg-langit { background-color: #6ec3ff; color: #2b2140; }

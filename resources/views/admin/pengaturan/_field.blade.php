@@ -6,11 +6,11 @@
 @endphp
 <div class="{{ $wide ? 'sm:col-span-2' : '' }}">
     @if ($tipe === 'toggle')
-        <label class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 cursor-pointer has-[:checked]:border-leaf has-[:checked]:bg-leaf-soft">
+        <label class="flex items-center justify-between gap-3 rounded-2xl border-2 border-navy bg-white px-4 py-3 cursor-pointer has-[:checked]:bg-leaf-soft">
             <span class="text-sm font-bold text-navy">{{ $label }}</span>
             <input type="hidden" name="{{ $key }}" value="0">
             <input type="checkbox" id="f_{{ $key }}" name="{{ $key }}" value="1" @checked((string) $val === '1') class="peer sr-only">
-            <span class="relative w-11 h-6 rounded-full bg-slate-300 peer-checked:bg-leaf transition-colors after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-sun" aria-hidden="true"></span>
+            <span class="relative shrink-0 w-11 h-6 rounded-full border-2 border-navy bg-slate-300 peer-checked:bg-leaf transition-colors after:absolute after:top-px after:left-px after:w-[18px] after:h-[18px] after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[20px] peer-focus-visible:ring-2 peer-focus-visible:ring-sun" aria-hidden="true"></span>
         </label>
     @else
     <label for="f_{{ $key }}" class="block text-sm font-bold text-navy mb-1.5">{{ $label }}</label>
