@@ -37,6 +37,13 @@ Route::middleware(['auth', 'role:admin,orangtua'])->prefix('chat')->name('chat.'
     Route::post('pribadi', [ChatController::class, 'pribadiKirim'])->middleware('throttle:40,1')->name('pribadi.kirim');
 });
 
+/* Chat pribadi guru <-> admin */
+Route::middleware(['auth', 'role:admin,guru'])->prefix('chat')->name('chat.')->group(function () {
+    Route::get('guru', [ChatController::class, 'guru'])->name('guru');
+    Route::get('guru/data', [ChatController::class, 'guruData'])->name('guru.data');
+    Route::post('guru', [ChatController::class, 'guruKirim'])->middleware('throttle:40,1')->name('guru.kirim');
+});
+
 /* Grup orang tua: admin, guru, dan semua orang tua */
 Route::middleware(['auth', 'role:admin,guru,orangtua'])->prefix('chat')->name('chat.')->group(function () {
     Route::get('grup', [ChatController::class, 'grup'])->name('grup');

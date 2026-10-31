@@ -5,10 +5,10 @@
 @php $rp = auth()->user()->role === 'admin' ? 'admin.' : 'guru.'; $isAdmin = $rp === 'admin.'; @endphp
 <p class="text-sm text-slate-500 mb-5">{{ $siswa->kelas->nama }} · {{ $siswa->usia }} · Periode {{ $periode }}</p>
 
-<details class="bg-sky-soft rounded-2xl p-4 mb-5 text-sm">
-    <summary class="font-bold text-navy cursor-pointer">Keterangan nilai</summary>
-    <ul class="mt-2 grid sm:grid-cols-2 gap-1">
-        @foreach (\App\Models\Perkembangan::NILAI as $k => $v)<li><b>{{ $k }}</b> — {{ $v }}</li>@endforeach
+<details class="bg-sky-soft rounded-2xl p-4 mb-5 text-sm" open>
+    <summary class="font-bold text-navy cursor-pointer">Arti nilai</summary>
+    <ul class="mt-2 grid sm:grid-cols-2 gap-2">
+        @foreach (\App\Models\Perkembangan::NILAI_MUDAH as $k => $v)<li><b>{{ $v }}</b> ({{ $k }}) — {{ \App\Models\Perkembangan::NILAI_PENJELASAN[$k] }}</li>@endforeach
     </ul>
 </details>
 
@@ -21,11 +21,11 @@
             <legend class="sr-only">{{ $label }}</legend>
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="font-extrabold text-navy">{{ $label }}</h2>
-                <div class="flex gap-1.5" role="radiogroup" aria-label="Nilai {{ $label }}">
+                <div class="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Nilai {{ $label }}">
                     @foreach (\App\Models\Perkembangan::NILAI as $n => $desc)
-                        <label class="cursor-pointer" title="{{ $desc }}">
+                        <label class="cursor-pointer" title="{{ $n }} · {{ $desc }}">
                             <input type="radio" class="peer sr-only" name="nilai[{{ $kode }}]" value="{{ $n }}" @checked(old("nilai.$kode", $cur->nilai ?? null) === $n)>
-                            <span class="block w-14 text-center py-1.5 rounded-lg border border-slate-200 text-xs font-extrabold text-slate-500 peer-checked:bg-navy peer-checked:text-white peer-checked:border-navy peer-focus-visible:ring-2 peer-focus-visible:ring-sun">{{ $n }}</span>
+                            <span class="block text-center px-3 py-1.5 rounded-xl border-2 border-navy text-xs font-extrabold text-navy bg-white peer-checked:bg-navy peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-sun">{{ \App\Models\Perkembangan::NILAI_MUDAH[$n] }} <span class="opacity-70">{{ $n }}</span></span>
                         </label>
                     @endforeach
                 </div>

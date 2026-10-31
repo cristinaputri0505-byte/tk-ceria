@@ -119,14 +119,18 @@ class RekapController extends Controller
             $tulis(['Rekap siswa ' . $kelas->nama, $judulPeriode]);
             $tulis([]);
             $tulis(array_merge(['No', 'Nama', 'NIS', 'Hadir', 'Izin', 'Sakit', 'Alpa', '% Hadir', 'Keterangan', 'Tugas e-learning selesai', 'Bintang'],
-                array_map(fn ($l) => $l . ' (' . $periode . ')', array_values(Perkembangan::ASPEK))));
+                array_map(fn ($l) => $l . ' (' . $periode . ')', array_values(Perkembangan::ASPEK_MUDAH))));
             foreach ($baris->values() as $i => $b) {
                 $tulis(array_merge([
                     $i + 1, $b->siswa->nama, $b->siswa->nis,
                     $b->absen['hadir'], $b->absen['izin'], $b->absen['sakit'], $b->absen['alpa'],
                     $b->persen === null ? '' : $b->persen . '%',
                     $b->keterangan->join(', '), $b->tugas, $b->bintang,
-                ], array_map(fn ($k) => optional($b->rapor->get($k))->nilai ?? '', array_keys(Perkembangan::ASPEK))));
+                ], array_map(function ($k) use ($b) {
+                    $n = optional($b->rapor->get($k))->nilai;
+
+                    return $n ? Perkembangan::NILAI_MUDAH[$n] . ' (' . $n . ')' : '';
+                }, array_keys(Perkembangan::ASPEK))));
             }
             fclose($f);
         }, $nama, ['Content-Type' => 'text/csv; charset=UTF-8']);

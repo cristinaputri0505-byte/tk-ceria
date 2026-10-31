@@ -14,7 +14,7 @@
 @section('content')
 @php
     $warnaNilai = ['BSB' => 'bg-daun', 'BSH' => 'bg-langit', 'MB' => 'bg-sun', 'BB' => 'bg-permen'];
-    $singkatAspek = ['agama_moral' => 'NAM', 'fisik_motorik' => 'FM', 'kognitif' => 'Kog', 'bahasa' => 'Bhs', 'sosial_emosional' => 'SosEm', 'seni' => 'Seni'];
+    $singkatAspek = \App\Models\Perkembangan::ASPEK_MUDAH;
     $total = $baris->isNotEmpty() ? collect(\App\Models\Absensi::STATUS)->map(fn ($l, $k) => $baris->sum(fn ($b) => $b->absen[$k])) : collect();
     $tercatat = $total->sum();
 @endphp
@@ -110,7 +110,7 @@
             <th class="px-2 py-2 font-extrabold border-l border-navy/20" title="Tugas guru + Soal Hari Ini yang selesai">Tugas</th>
             <th class="px-2 py-2 font-extrabold">Bintang</th>
             @foreach (\App\Models\Perkembangan::ASPEK as $kode => $label)
-                <th class="px-2 py-2 font-extrabold {{ $loop->first ? 'border-l border-navy/20' : '' }}" title="{{ $label }}">{{ $singkatAspek[$kode] }}</th>
+                <th class="px-2 py-2 font-extrabold leading-tight {{ $loop->first ? 'border-l border-navy/20' : '' }}" title="{{ $label }}">{{ $singkatAspek[$kode] }}</th>
             @endforeach
         </tr>
     </thead>
@@ -145,7 +145,7 @@
                 @foreach (array_keys(\App\Models\Perkembangan::ASPEK) as $kode)
                     @php $n = optional($b->rapor->get($kode))->nilai; @endphp
                     <td class="px-1.5 py-3 text-center {{ $loop->first ? 'border-l border-navy/10' : '' }}">
-                        @if ($n)<span class="inline-block text-[11px] font-extrabold text-navy px-1.5 py-0.5 rounded-md border-2 border-navy {{ $warnaNilai[$n] }}" title="{{ \App\Models\Perkembangan::NILAI[$n] }}">{{ $n }}</span>@else<span class="text-ink">—</span>@endif
+                        @if ($n)<span class="inline-block whitespace-nowrap text-[11px] font-extrabold text-navy px-2 py-0.5 rounded-full border-2 border-navy {{ $warnaNilai[$n] }}" title="{{ $n }} · {{ \App\Models\Perkembangan::NILAI[$n] }}">{{ \App\Models\Perkembangan::NILAI_MUDAH[$n] }}</span>@else<span class="text-ink">—</span>@endif
                     </td>
                 @endforeach
             </tr>
@@ -156,11 +156,18 @@
 </table>
 </div>
 </div>
-<p class="text-xs text-ink mt-3">
-    Perkembangan: NAM = Nilai Agama &amp; Moral, FM = Fisik Motorik, Kog = Kognitif, Bhs = Bahasa, SosEm = Sosial Emosional.
-    @foreach (\App\Models\Perkembangan::NILAI as $k => $l) {{ $k }} = {{ $l }}{{ $loop->last ? '.' : ',' }} @endforeach
-    <a href="{{ route($rp.'perkembangan.index') }}" class="print:hidden font-bold text-sky">Isi perkembangan</a>
-</p>
+<div class="mt-4 bg-white rounded-2xl border-2 border-navy p-4">
+    <p class="text-sm font-extrabold text-navy">Arti nilai perkembangan</p>
+    <ul class="mt-2 grid sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+        @foreach (\App\Models\Perkembangan::NILAI_MUDAH as $k => $l)
+            <li class="flex items-start gap-2">
+                <span class="shrink-0 whitespace-nowrap font-extrabold text-navy px-2 py-0.5 rounded-full border-2 border-navy {{ $warnaNilai[$k] }}">{{ $l }}</span>
+                <span class="text-ink">{{ \App\Models\Perkembangan::NILAI_PENJELASAN[$k] }} <span class="whitespace-nowrap">(rapor: {{ $k }})</span></span>
+            </li>
+        @endforeach
+    </ul>
+    <a href="{{ route($rp.'perkembangan.index') }}" class="print:hidden inline-block mt-2 text-xs font-bold text-sky">Isi perkembangan</a>
+</div>
 
 {{-- Kegiatan (dokumentasi) pada periode ini --}}
 <section class="bg-white rounded-3xl p-6 mt-6">

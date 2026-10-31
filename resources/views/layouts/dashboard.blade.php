@@ -29,6 +29,7 @@
             ['Pengumuman', 'admin.pengumuman.index', 'megaphone', 'admin.pengumuman.*'],
             ['Dokumentasi', 'admin.dokumentasi.index', 'camera', 'admin.dokumentasi.*'],
             ['Chat Orang Tua', 'chat.index', 'message-circle', null, request()->routeIs('chat.index', 'chat.pribadi', 'chat.pribadi.*')],
+            ['Chat Guru', 'chat.guru', 'messages-square', 'chat.guru*'],
             ['Grup Orang Tua', 'chat.grup', 'users-round', 'chat.grup*'],
             ['group' => 'Website'],
             ['Pengaturan Halaman', 'admin.pengaturan.index', 'settings', null, request()->routeIs('admin.pengaturan.*') && request('tab') !== 'portal'],
@@ -49,6 +50,7 @@
             ['Dokumentasi Kelas', 'guru.dokumentasi.index', 'camera', 'guru.dokumentasi.*'],
             ['E-Learning Anak', 'elearning.index', 'gamepad-2', 'elearning.*'],
             ['group' => 'Komunikasi'],
+            ['Chat dengan Admin', 'chat.guru', 'message-circle', 'chat.guru*'],
             ['Grup Orang Tua', 'chat.grup', 'users-round', 'chat.grup*'],
         ],
         default => [
@@ -75,6 +77,7 @@
             'admin.pendaftaran.index' => \App\Models\Pendaftaran::where('status', 'baru')->count(),
             'admin.reset.index' => \App\Models\PermintaanReset::where('status', 'menunggu')->count(),
             'chat.index' => \App\Models\ChatPesan::belumPribadi($user),
+            'chat.guru' => \App\Models\ChatPesan::belumGuru($user),
             'chat.grup' => \App\Models\ChatPesan::belumGrup($user),
         ],
         'orangtua' => [
@@ -84,6 +87,7 @@
             'chat.grup' => \App\Models\ChatPesan::belumGrup($user),
         ],
         'guru' => [
+            'chat.guru' => \App\Models\ChatPesan::belumGuru($user),
             'chat.grup' => \App\Models\ChatPesan::belumGrup($user),
         ],
         default => [],
@@ -93,6 +97,7 @@
     $pilihanChat = match ($user->role) {
         'admin' => [
             ['Chat Pribadi', 'Percakapan satu-satu dengan tiap orang tua', 'chat.index', 'message-circle', 'bg-sky-soft text-sky'],
+            ['Chat Guru', 'Percakapan satu-satu dengan tiap guru', 'chat.guru', 'messages-square', 'bg-jeruk-soft text-navy'],
             ['Grup Orang Tua', 'Satu ruang untuk admin, guru & semua orang tua', 'chat.grup', 'users-round', 'bg-leaf-soft text-emerald-600'],
         ],
         'orangtua' => [

@@ -26,6 +26,32 @@ class Perkembangan extends Model
         'BSB' => 'Berkembang Sangat Baik',
     ];
 
+    /** Nama yang mudah dimengerti untuk setiap nilai (kode resmi di atas tetap yang disimpan). */
+    public const NILAI_MUDAH = [
+        'BB' => 'Perlu Bantuan',
+        'MB' => 'Mulai Bisa',
+        'BSH' => 'Sudah Bisa',
+        'BSB' => 'Sangat Baik',
+    ];
+
+    /** Penjelasan singkat untuk guru & orang tua. */
+    public const NILAI_PENJELASAN = [
+        'BB' => 'Anak belum bisa melakukannya dan masih perlu banyak bantuan.',
+        'MB' => 'Anak mulai bisa, tetapi masih perlu diingatkan atau dibantu.',
+        'BSH' => 'Anak sudah bisa melakukannya sendiri sesuai usianya.',
+        'BSB' => 'Anak sudah sangat mahir, bahkan bisa membantu temannya.',
+    ];
+
+    /** Nama aspek yang pendek & mudah dimengerti (untuk tabel). */
+    public const ASPEK_MUDAH = [
+        'agama_moral' => 'Agama & Moral',
+        'fisik_motorik' => 'Gerak Tubuh',
+        'kognitif' => 'Daya Pikir',
+        'bahasa' => 'Bahasa',
+        'sosial_emosional' => 'Sosial & Emosi',
+        'seni' => 'Seni',
+    ];
+
     public function siswa()
     {
         return $this->belongsTo(Siswa::class);

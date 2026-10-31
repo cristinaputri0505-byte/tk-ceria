@@ -108,7 +108,7 @@
                     @if ($a->rapor->isNotEmpty())
                         <div class="flex flex-wrap gap-1 mt-2">
                             @foreach (['BSB', 'BSH', 'MB', 'BB'] as $n)
-                                @if ($a->rapor[$n] ?? 0)<span class="text-xs font-extrabold bg-white text-violet-700 px-2 py-1 rounded-lg" title="{{ \App\Models\Perkembangan::NILAI[$n] }}">{{ $a->rapor[$n] }} {{ $n }}</span>@endif
+                                @if ($a->rapor[$n] ?? 0)<span class="text-xs font-extrabold bg-white text-violet-700 px-2 py-1 rounded-lg" title="{{ $n }} · {{ \App\Models\Perkembangan::NILAI[$n] }}">{{ $a->rapor[$n] }} {{ \App\Models\Perkembangan::NILAI_MUDAH[$n] }}</span>@endif
                             @endforeach
                         </div>
                         <p class="text-[11px] text-slate-500 mt-1.5">{{ $a->rapor->sum() }} dari 6 aspek dinilai</p>

@@ -26,6 +26,19 @@ class ChatPesan extends Model
             : $q->whereColumn('pengirim_id', 'orang_tua_id')->count();
     }
 
+    /**
+     * Jumlah pesan chat guru <-> admin yang belum dibaca oleh $u.
+     * Pada jenis 'guru', kolom orang_tua_id berisi id guru pemilik percakapan.
+     */
+    public static function belumGuru(User $u): int
+    {
+        $q = static::where('jenis', 'guru')->where('dibaca', false);
+
+        return $u->role === User::GURU
+            ? $q->where('orang_tua_id', $u->id)->where('pengirim_id', '!=', $u->id)->count()
+            : $q->whereColumn('pengirim_id', 'orang_tua_id')->count();
+    }
+
     /** Jumlah pesan grup yang belum dibaca oleh $u. */
     public static function belumGrup(User $u): int
     {

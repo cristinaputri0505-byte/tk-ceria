@@ -185,17 +185,17 @@
                 <li class="rounded-2xl bg-cloud p-4">
                     <div class="flex items-center justify-between gap-3">
                         <h4 class="font-bold text-navy">{{ $label }}</h4>
-                        <span class="text-xs font-extrabold bg-white text-navy px-2 py-1 rounded-lg">{{ $p->nilai ?? '—' }}</span>
+                        <span class="text-xs font-extrabold bg-white text-navy px-2 py-1 rounded-lg" @if($p) title="{{ $p->nilai }} · {{ \App\Models\Perkembangan::NILAI[$p->nilai] }}" @endif>{{ $p ? \App\Models\Perkembangan::NILAI_MUDAH[$p->nilai] : '—' }}</span>
                     </div>
                     <div class="flex gap-1 mt-2" aria-hidden="true">
                         @for ($i = 1; $i <= 4; $i++)<span class="h-2 flex-1 rounded-full {{ $i <= $level ? 'bg-leaf' : 'bg-slate-200' }}"></span>@endfor
                     </div>
-                    <p class="text-xs font-bold text-slate-500 mt-1.5">{{ $p ? \App\Models\Perkembangan::NILAI[$p->nilai] : 'Belum dinilai' }}</p>
+                    <p class="text-xs font-bold text-slate-500 mt-1.5">{{ $p ? \App\Models\Perkembangan::NILAI_PENJELASAN[$p->nilai] : 'Belum dinilai' }}</p>
                     @if ($p?->catatan)<p class="text-sm text-slate-600 mt-2">{{ $p->catatan }}</p>@endif
                 </li>
             @endforeach
         </ul>
-        <p class="text-xs text-slate-500 mt-4">Dinilai oleh {{ $perkembangan->first()->guru->name ?? 'wali kelas' }}. BB = Belum Berkembang, MB = Mulai Berkembang, BSH = Berkembang Sesuai Harapan, BSB = Berkembang Sangat Baik.</p>
+        <p class="text-xs text-slate-500 mt-4">Dinilai oleh {{ $perkembangan->first()->guru->name ?? 'wali kelas' }}. Di rapor resmi: Perlu Bantuan = BB, Mulai Bisa = MB, Sudah Bisa = BSH, Sangat Baik = BSB.</p>
     @endif
 </section>
 

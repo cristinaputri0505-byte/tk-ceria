@@ -40,7 +40,7 @@ class RekapSiswaTest extends TestCase
         $this->actingAs($guru)->get(route('guru.dashboard'))->assertSee(route('guru.rekap.index'), false);
         $this->actingAs($guru)->get(route('guru.rekap.index'))->assertOk()
             ->assertSee($kelas->nama)->assertSee($anak->nama)
-            ->assertSee('Sakit')->assertSee('Demam ringan')->assertSee('BSB')->assertSee('⭐ 3')
+            ->assertSee('Sakit')->assertSee('Demam ringan')->assertSee('Sangat Baik')->assertSee('⭐ 3')
             ->assertDontSee($lain->nama);
     }
 

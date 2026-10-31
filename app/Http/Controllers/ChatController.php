@@ -80,6 +80,74 @@ class ChatController extends Controller
         return response()->json(['ok' => true]);
     }
 
+    /* ---------- Chat pribadi guru <-> admin ---------- */
+    public function guru(Request $request)
+    {
+        $user = $request->user();
+        if ($user->role === User::ADMIN && ! $request->filled('ortu')) {
+            $ringkas = ChatPesan::where('jenis', 'guru')
+                ->selectRaw('orang_tua_id, max(id) as terakhir_id, sum(case when not dibaca and pengirim_id = orang_tua_id then 1 else 0 end) as belum')
+                ->groupBy('orang_tua_id')->get()->keyBy('orang_tua_id');
+
+            return view('chat.guru-daftar', [
+                'guru' => User::where('role', User::GURU)->orderBy('name')->get()
+                    ->sortByDesc(fn ($g) => $ringkas->get($g->id)?->terakhir_id ?? 0)->values(),
+                'ringkas' => $ringkas,
+                'isiTerakhir' => ChatPesan::whereIn('id', $ringkas->pluck('terakhir_id'))->get()->keyBy('orang_tua_id'),
+            ]);
+        }
+
+        return view('chat.guru', ['guru' => $this->guruPercakapan($request), 'untukAdmin' => $user->role === User::ADMIN]);
+    }
+
+    public function guruData(Request $request)
+    {
+        $user = $request->user();
+        $guru = $this->guruPercakapan($request);
+
+        $data = $this->ambil(ChatPesan::with('pengirim')->where('jenis', 'guru')->where('orang_tua_id', $guru->id), $request);
+        if ($data->isEmpty() && $this->hanyaCekBaru($request)) return response()->json([]);
+
+        $belum = ChatPesan::where('jenis', 'guru')->where('orang_tua_id', $guru->id)->where('dibaca', false);
+        if ($user->role === User::GURU) {
+            $belum->where('pengirim_id', '!=', $guru->id)->update(['dibaca' => true]);
+            $this->tandaiNotif($user, route('chat.guru', [], false));
+        } else {
+            $belum->where('pengirim_id', $guru->id)->update(['dibaca' => true]);
+            $this->tandaiNotif($user, route('chat.guru', ['ortu' => $guru->id], false));
+        }
+
+        return response()->json($data->map(fn ($m) => $this->bentuk($m, $user))->values());
+    }
+
+    public function guruKirim(Request $request)
+    {
+        $user = $request->user();
+        $guru = $this->guruPercakapan($request);
+        $request->validate(['isi' => 'required|string|max:2000']);
+
+        $m = ChatPesan::create(['jenis' => 'guru', 'orang_tua_id' => $guru->id, 'pengirim_id' => $user->id, 'isi' => trim($request->isi)]);
+
+        if ($user->role === User::GURU) {
+            Notifikasi::kirim(User::where('role', User::ADMIN)->pluck('id'), 'chat', 'Pesan dari ' . $user->name,
+                Str::limit($m->isi, 80), route('chat.guru', ['ortu' => $guru->id], false));
+        } else {
+            Notifikasi::kirim([$guru->id], 'chat', 'Pesan dari admin sekolah',
+                Str::limit($m->isi, 80), route('chat.guru', [], false));
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    /** Guru pemilik percakapan: dirinya sendiri (guru) atau ?ortu=<id guru> (admin). */
+    private function guruPercakapan(Request $request): User
+    {
+        $user = $request->user();
+        if ($user->role === User::GURU) return $user;
+
+        return User::where('role', User::GURU)->findOrFail($request->input('ortu'));
+    }
+
     /* ---------- Grup semua orang tua ---------- */
     public function grup()
     {
