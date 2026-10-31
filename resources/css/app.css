@@ -40,3 +40,66 @@
     @keyframes belajar-pop { 0% { transform: scale(.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 }
 
+
+/* ===== Font judul: Baloo 2 (OFL, disimpan di public/fonts/baloo2) ===== */
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-weight: 500 600; font-display: swap; src: url('/fonts/baloo2/baloo-2-latin-600-normal.woff') format('woff'); }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/baloo2/baloo-2-latin-700-normal.woff') format('woff'); }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-weight: 800 900; font-display: swap; src: url('/fonts/baloo2/baloo-2-latin-800-normal.woff') format('woff'); }
+
+/* =====================================================================
+   Tema "Taman Bermain": kartu & tombol seperti stiker (garis tinta tebal
+   + bayangan padat), latar krem seperti kertas gambar.
+   Berlaku untuk website publik (body.situs) dan semua panel (body.dash).
+   Warna gelap (malam) diatur di resources/views/partials/tema.blade.php.
+   ===================================================================== */
+.situs, .dash { --garis: #2b2140; --bayang: #2b2140; }
+
+/* Kartu besar = stiker */
+:is(.situs, .dash) .bg-white:is(.rounded-3xl, .rounded-\[2rem\]) {
+    border: 2.5px solid var(--garis) !important;
+    box-shadow: 5px 5px 0 var(--bayang);
+}
+/* Kotak kecil & kotak berwarna lembut: garis tinta tipis */
+:is(.situs, .dash) .rounded-2xl:is(.bg-white, .bg-sky-soft, .bg-sun-soft, .bg-leaf-soft, .bg-daun-soft, .bg-cloud, .bg-rose-50, .bg-amber-50, .bg-emerald-50, .bg-violet-50, .bg-sky-50, .bg-permen-soft, .bg-anggur-soft, .bg-jeruk-soft, .bg-langit-soft) {
+    border: 2px solid var(--garis);
+}
+:is(.situs, .dash) :is(.rounded-3xl, .rounded-\[2rem\]):is(.bg-sky-50, .bg-sky-soft, .bg-sun-soft, .bg-leaf-soft, .bg-daun-soft, .bg-rose-50, .bg-amber-50, .bg-emerald-50, .bg-violet-50, .bg-permen-soft, .bg-anggur-soft, .bg-jeruk-soft, .bg-langit-soft) {
+    border: 2.5px solid var(--garis) !important;
+    box-shadow: 5px 5px 0 var(--bayang);
+}
+
+/* Tombol berwarna = stiker yang bisa ditekan */
+:is(.situs, .dash) :is(a, button):is(.bg-sky, .bg-sky-dark, .bg-navy, .bg-leaf, .bg-berry, .bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur, .bg-emerald-600, .bg-rose-600, .bg-rose-500):not(.tanpa-stiker),
+:is(.situs, .dash) :is(a, button):is(.bg-white, .bg-cloud):is(.rounded-xl, .rounded-full):not(.tanpa-stiker),
+:is(.situs, .dash) :is(button, input)[type="submit"]:not(.tanpa-stiker) {
+    border: 2px solid var(--garis);
+    box-shadow: 3px 3px 0 var(--bayang);
+    transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+:is(.situs, .dash) :is(a, button):is(.bg-sky, .bg-sky-dark, .bg-navy, .bg-leaf, .bg-berry, .bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur, .bg-emerald-600, .bg-rose-600, .bg-rose-500, .bg-white, .bg-cloud):not(.tanpa-stiker):hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--bayang);
+}
+:is(.situs, .dash) :is(a, button):is(.bg-sky, .bg-navy, .bg-leaf, .bg-berry, .bg-sun):not(.tanpa-stiker):active { transform: translate(3px, 3px); box-shadow: none; }
+
+/* Isian formulir: garis tinta, sudut membulat */
+:is(.situs, .dash) :is(input, select, textarea):is(.border-slate-200, .border-slate-300, .border-slate-100) {
+    border-width: 2px;
+    border-color: var(--garis);
+}
+
+/* Tabel: kepala tabel berwarna kuning lembut */
+:is(.situs, .dash) table thead tr { background-color: #fff1c7; }
+:is(.situs, .dash) table thead th { color: #2b2140; }
+
+/* Garis pemisah tipis tetap lembut */
+:is(.situs, .dash) .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #eadfca; }
+
+/* Hiasan: garis bawah coretan krayon untuk judul */
+.coret { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 18' preserveAspectRatio='none'%3E%3Cpath d='M3 12 C 40 2, 80 16, 120 8 S 190 4, 217 10' fill='none' stroke='%23ffc53d' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% .32em; padding-bottom: .12em; }
+.miring-kiri { transform: rotate(-1.5deg); }
+.miring-kanan { transform: rotate(1.5deg); }
+@media (prefers-reduced-motion: no-preference) { .miring-kiri:hover, .miring-kanan:hover { transform: rotate(0); transition: transform .2s ease; } }
+
+/* Kartu yang dimiringkan tidak boleh membuat halaman bisa digeser ke samping di HP */
+body.situs, .dash main { overflow-x: clip; }

@@ -73,50 +73,72 @@
     html.dark .ikon-sun { display: inline-block; }
     html.dark .ikon-moon { display: none; }
 
+    /* ===== Mode gelap tema "Taman Bermain": malam ungu tua, stiker tetap berwarna ===== */
     html.dark { color-scheme: dark; }
-    html.dark body { background: #0b1220 !important; color: #e2e8f0; }
+    html.dark body { background: #17122a !important; color: #ece7f8; }
+    html.dark .dash { --garis: #6b5c96; --bayang: #07050f; }
 
     /* Permukaan */
-    html.dark .bg-white { background-color: #152238; }
-    html.dark .bg-cloud { background-color: #1f2f4d; }
-    html.dark .bg-slate-50 { background-color: #1b2a45; }
-    html.dark .bg-sky-soft { background-color: #1b2f55; }
-    html.dark .bg-sun-soft { background-color: #3b3114; }
-    html.dark .bg-leaf-soft { background-color: #12382a; }
-    html.dark .bg-rose-50 { background-color: #3a1a26; }
-    html.dark .bg-sky-50 { background-color: #16294a; }
+    html.dark .bg-white { background-color: #241c3a; }
+    html.dark .bg-cloud { background-color: #2c2346; }
+    html.dark .bg-cloud\/95 { background-color: rgba(23, 18, 42, .95); }
+    html.dark .bg-slate-50 { background-color: #2a2242; }
+    html.dark .bg-sky-soft, html.dark .bg-langit-soft { background-color: #1c2f52; }
+    html.dark .bg-sun-soft { background-color: #3b3016; }
+    html.dark .bg-leaf-soft, html.dark .bg-daun-soft { background-color: #143528; }
+    html.dark .bg-permen-soft { background-color: #45203a; }
+    html.dark .bg-anggur-soft { background-color: #2f2658; }
+    html.dark .bg-jeruk-soft { background-color: #45281a; }
+    html.dark .bg-rose-50 { background-color: #3d1c2c; }
+    html.dark .bg-sky-50 { background-color: #1a2a4d; }
     html.dark .bg-rose-100 { background-color: #4a2030; }
-    html.dark .bg-amber-50 { background-color: #3a2f12; }
+    html.dark .bg-amber-50 { background-color: #3b3016; }
     html.dark .bg-amber-100 { background-color: #4a3a14; }
-    html.dark .bg-emerald-50 { background-color: #123226; }
+    html.dark .bg-emerald-50 { background-color: #143528; }
     html.dark .bg-emerald-100 { background-color: #14473a; }
-    html.dark .bg-violet-50 { background-color: #2a2250; }
-    html.dark .hover\:bg-cloud:hover { background-color: #1f2f4d; }
+    html.dark .bg-violet-50 { background-color: #2f2658; }
+    html.dark .bg-navy { background-color: #4a3d73; }
+    html.dark .hover\:bg-cloud:hover { background-color: #2c2346; }
     html.dark .hover\:bg-sky-soft:hover { background-color: #243a63; }
+    html.dark .hover\:bg-white:hover, html.dark .hover\:bg-white\/70:hover { background-color: rgba(255, 255, 255, .08); }
 
     /* Garis */
-    html.dark .border-slate-100 { border-color: #24344f; }
-    html.dark .border-slate-200 { border-color: #2c3d5c; }
+    html.dark .border-navy { border-color: #6b5c96; }
+    html.dark .border-navy\/15 { border-color: rgba(107, 92, 150, .45); }
+    html.dark .border-slate-100 { border-color: #3a3058; }
+    html.dark .border-slate-200 { border-color: #463a68; }
     html.dark .border-rose-100, html.dark .border-rose-200 { border-color: #5a2a3a; }
     html.dark .border-amber-100 { border-color: #5a4a1c; }
+    html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #3a3058; }
 
     /* Teks */
-    html.dark .text-navy { color: #e8eefc; }
-    html.dark .text-ink { color: #cbd5e1; }
-    html.dark .text-slate-400 { color: #8392aa; }
-    html.dark .text-slate-500 { color: #9aa8bf; }
-    html.dark .text-slate-600, html.dark .text-slate-700 { color: #b8c4d6; }
-    html.dark .text-sky { color: #6aa8ff; }
-    html.dark .text-leaf { color: #4ade80; }
+    html.dark .text-navy { color: #f3eefc; }
+    html.dark .text-ink { color: #cfc6e6; }
+    html.dark .text-slate-400 { color: #9c92ba; }
+    html.dark .text-slate-500 { color: #b1a8cc; }
+    html.dark .text-slate-600, html.dark .text-slate-700 { color: #c9c1e0; }
+    html.dark .text-sky { color: #7cb6ff; }
+    html.dark .text-leaf { color: #5ee08f; }
     html.dark .text-amber-600, html.dark .text-amber-700 { color: #fcd34d; }
     html.dark .text-rose-600, html.dark .text-rose-700 { color: #fda4af; }
     html.dark .text-emerald-700 { color: #6ee7b7; }
     html.dark .text-violet-700 { color: #c4b5fd; }
 
-    /* Pengecualian: teks navy di atas latar kuning/sidebar tetap gelap */
-    html.dark .bg-sun.text-navy, html.dark .bg-sun .text-navy, html.dark aside .text-navy { color: #0f2650; }
+    /* Stiker berwarna cerah tetap memakai tulisan tinta gelap agar terbaca */
+    html.dark :is(.bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur):is(.text-navy, .text-ink),
+    html.dark :is(.bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur) :is(.text-navy, .text-ink) { color: #2b2140; }
+    html.dark :is(.bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur) :is(.bg-white, .bg-cloud) :is(.text-navy, .text-ink),
+    html.dark :is(.bg-sun, .bg-daun, .bg-langit, .bg-jeruk, .bg-permen, .bg-anggur) :is(.bg-white, .bg-cloud):is(.text-navy, .text-ink) { color: #f3eefc; }
+
+    /* Pilihan status (Absen cepat) yang sedang dipilih */
+    html.dark label:has(:checked).has-\[\:checked\]\:bg-daun { background-color: #3dbe72; color: #2b2140; }
+    html.dark label:has(:checked).has-\[\:checked\]\:bg-langit { background-color: #6ec3ff; color: #2b2140; }
+    html.dark label:has(:checked).has-\[\:checked\]\:bg-sun { background-color: #ffc53d; color: #2b2140; }
+    html.dark label:has(:checked).has-\[\:checked\]\:bg-permen { background-color: #ff8fb1; color: #2b2140; }
 
     /* Formulir */
-    html.dark input, html.dark select, html.dark textarea { background-color: #0f1a2e; color: #e2e8f0; border-color: #2c3d5c; }
-    html.dark ::placeholder { color: #7a8aa3; }
+    html.dark input, html.dark select, html.dark textarea { background-color: #1d1631; color: #ece7f8; border-color: #6b5c96; }
+    html.dark ::placeholder { color: #8f86ad; }
+    html.dark table thead tr { background-color: #3b3016; }
+    html.dark table thead th { color: #fcefc4; }
 </style>

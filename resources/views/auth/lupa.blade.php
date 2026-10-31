@@ -6,12 +6,12 @@
     <title>Lupa Password — {{ $site['nama_sekolah'] ?? 'TK Ceria' }}</title>
     @include('partials.head')
 </head>
-<body class="bg-cloud font-body text-ink antialiased min-h-screen grid place-items-center p-4">
+<body class="situs bg-cloud font-body text-ink antialiased min-h-screen grid place-items-center p-4">
 <main class="w-full max-w-md">
     <div class="text-center mb-6">
         <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
             @include('partials.logo', ['size' => 48])
-            <span class="font-display text-2xl font-semibold text-navy">{{ $site['nama_sekolah'] ?? 'TK Ceria' }}</span>
+            <span class="font-display text-2xl font-extrabold text-navy">{{ $site['nama_sekolah'] ?? 'TK Ceria' }}</span>
         </a>
     </div>
 

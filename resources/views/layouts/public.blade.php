@@ -7,17 +7,17 @@
     <meta name="description" content="{{ $site['nama_sekolah'] }}: {{ \Illuminate\Support\Str::limit($site['hero_deskripsi'], 150) }}">
     @include('partials.head')
 </head>
-<body class="bg-cloud font-body text-ink antialiased">
+<body class="situs bg-cloud font-body text-ink antialiased">
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 bg-white px-4 py-2 rounded-lg">Lewati ke konten</a>
 
     {{-- NAVBAR --}}
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-100">
+    <header class="sticky top-0 z-40 bg-cloud/95 backdrop-blur border-b-[2.5px] border-navy">
         <nav class="max-w-7xl mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between gap-3 sm:gap-6">
             <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3 min-w-0">
                 @include('partials.logo', ['size' => 44])
                 <span class="leading-none min-w-0">
-                    <span class="block font-display text-xl sm:text-[1.7rem] font-semibold text-navy truncate">{{ $site['nama_sekolah'] }}</span>
-                    <span class="hidden sm:block text-[11px] font-bold text-navy/80 mt-0.5 truncate">{{ $site['tagline'] }}</span>
+                    <span class="block font-display text-xl sm:text-[1.7rem] font-extrabold text-navy truncate">{{ $site['nama_sekolah'] }}</span>
+                    <span class="hidden sm:block text-[12px] font-bold text-ink mt-0.5 truncate">{{ $site['tagline'] }}</span>
                 </span>
             </a>
 
@@ -34,19 +34,19 @@
                 ];
             @endphp
 
-            <ul class="hidden lg:flex items-center gap-1 text-[13.5px] font-bold text-navy">
+            <ul class="hidden lg:flex items-center gap-1 text-[14px] font-extrabold text-navy">
                 @foreach ($menu as [$label, $url, $active])
-                    <li><a href="{{ $url }}" @if($active) aria-current="page" @endif class="relative px-3 py-2 rounded-lg hover:text-sky transition-colors {{ $active ? 'text-navy after:absolute after:left-3 after:right-3 after:-bottom-1 after:h-[3px] after:rounded-full after:bg-leaf' : '' }}">{{ $label }}</a></li>
+                    <li><a href="{{ $url }}" @if($active) aria-current="page" @endif class="block px-3 py-1.5 rounded-full border-2 transition-colors {{ $active ? 'bg-sun border-navy' : 'border-transparent hover:bg-white hover:border-navy' }}">{{ $label }}</a></li>
                 @endforeach
             </ul>
 
             <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
                 @auth
-                    <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-bold px-3 sm:px-5 py-2.5 rounded-full hover:bg-sky-dark" aria-label="Dashboard">
+                    <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-extrabold px-3 sm:px-5 py-2.5 rounded-full hover:bg-sky-dark" aria-label="Dashboard">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> <span class="hidden sm:inline">Dashboard</span>
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-bold px-4 sm:px-6 py-2.5 rounded-full hover:bg-sky-dark">
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 bg-sky text-white text-sm font-extrabold px-4 sm:px-6 py-2.5 rounded-full hover:bg-sky-dark">
                         <i data-lucide="user-round" class="w-4 h-4"></i> Login
                     </a>
                 @endauth
@@ -55,9 +55,9 @@
                 </button>
             </div>
         </nav>
-        <ul id="mobileMenu" class="hidden lg:hidden border-t border-slate-100 px-4 py-3 grid grid-cols-2 gap-1 font-bold text-navy text-sm">
+        <ul id="mobileMenu" class="hidden lg:hidden border-t-2 border-navy/15 px-4 py-3 grid grid-cols-2 gap-2 font-extrabold text-navy text-sm">
             @foreach ($menu as [$label, $url])
-                <li><a href="{{ $url }}" class="block px-3 py-2 rounded-lg hover:bg-cloud">{{ $label }}</a></li>
+                <li><a href="{{ $url }}" class="block px-3 py-2 rounded-xl border-2 border-navy bg-white">{{ $label }}</a></li>
             @endforeach
         </ul>
     </header>
@@ -71,12 +71,13 @@
         $sosmed = array_filter(['facebook' => ['facebook', 'Facebook'], 'instagram' => ['instagram', 'Instagram'], 'youtube' => ['youtube', 'YouTube'], 'tiktok' => ['music-2', 'TikTok']], fn ($v, $k) => ! empty($site[$k]), ARRAY_FILTER_USE_BOTH);
         $wa = preg_replace('/^0/', '62', preg_replace('/\D/', '', (string) $site['whatsapp']));
     @endphp
-    <footer class="bg-navy-deep text-white mt-16">
+    <svg class="block w-full h-10 mt-16 text-navy-deep" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 C 120 0, 240 60, 360 30 S 600 0, 720 30 S 960 60, 1080 30 S 1320 0, 1440 30 V60 H0Z" fill="currentColor"/></svg>
+    <footer class="bg-navy-deep text-white">
         <div class="max-w-7xl mx-auto px-4 lg:px-8 py-10 grid gap-8 md:grid-cols-3">
             <div class="flex items-start gap-3">
                 @include('partials.logo', ['size' => 44])
                 <div>
-                    <p class="font-display text-2xl font-semibold leading-none">{{ $site['nama_sekolah'] }}</p>
+                    <p class="font-display text-2xl font-extrabold leading-none text-sun">{{ $site['nama_sekolah'] }}</p>
                     <p class="text-sm text-white/80 mt-1">{{ $site['tagline'] }}</p>
                     <p class="text-sm text-white/70 mt-4 leading-relaxed">{!! nl2br(e($site['alamat'])) !!}@if($site['jam_operasional'])<br>{{ $site['jam_operasional'] }}@endif</p>
                 </div>

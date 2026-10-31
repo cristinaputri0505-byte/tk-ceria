@@ -1,7 +1,7 @@
 <div class="text-center">
-    @php $huruf = ($besar ?? false ? 'w-32 h-32 text-4xl' : 'w-20 h-20 text-2xl') . ' mx-auto rounded-full grid place-items-center bg-sky-soft font-display text-sky border-4 border-white shadow'; @endphp
+    @php $huruf = ($besar ?? false ? 'w-32 h-32 text-4xl' : 'w-20 h-20 text-2xl') . ' mx-auto rounded-full grid place-items-center font-display font-bold text-navy border-[2.5px] border-navy shadow-[3px_3px_0_#2b2140] ' . ['bg-langit', 'bg-permen', 'bg-sun', 'bg-daun', 'bg-anggur', 'bg-jeruk'][$s->id % 6]; @endphp
     @if ($s->foto)
-        <img src="{{ Storage::disk('public')->url($s->foto) }}" alt="{{ $s->nama }}" loading="lazy" class="{{ $besar ?? false ? 'w-32 h-32' : 'w-20 h-20' }} mx-auto rounded-full object-cover border-4 border-white shadow"
+        <img src="{{ Storage::disk('public')->url($s->foto) }}" alt="{{ $s->nama }}" loading="lazy" class="{{ $besar ?? false ? 'w-32 h-32' : 'w-20 h-20' }} mx-auto rounded-full object-cover border-[2.5px] border-navy shadow-[3px_3px_0_#2b2140]"
             onerror="this.style.display='none';this.nextElementSibling.style.display=''">
         <span class="{{ $huruf }}" style="display:none" aria-hidden="true">{{ $s->inisial }}</span>
     @else

@@ -11,17 +11,23 @@ export default {
     ],
     theme: {
         extend: {
+            // Tema "Taman Bermain": warna permen cerah + garis tinta ungu tua (seperti stiker)
             colors: {
-                navy: { DEFAULT: '#14307d', deep: '#0f2650' },
-                sky: { DEFAULT: '#1f6fe5', dark: '#1658bd', soft: '#e8f1ff' },
-                sun: { DEFAULT: '#fbbf24', soft: '#fff6d8' },
-                leaf: { DEFAULT: '#1f9d55', soft: '#e3f6ea' },
-                berry: '#e5486b',
-                cloud: '#f5f9ff',
-                ink: '#2b3a55',
+                navy: { DEFAULT: '#2b2140', deep: '#211934' },          // tinta: judul, garis, tombol gelap
+                sky: { DEFAULT: '#1f6fe5', dark: '#1658bd', soft: '#d9ecff' },
+                sun: { DEFAULT: '#ffc53d', soft: '#fff1c7' },
+                leaf: { DEFAULT: '#1e8a4c', soft: '#d6f2e0' },
+                berry: '#d93a63',
+                cloud: '#fff8ec',                                       // latar krem seperti kertas gambar
+                ink: '#463c5c',
+                permen: { DEFAULT: '#ff8fb1', soft: '#ffd6e3' },
+                anggur: { DEFAULT: '#b9a4ff', soft: '#e6deff' },
+                jeruk: { DEFAULT: '#ff9a5c', soft: '#ffe1cc' },
+                langit: { DEFAULT: '#6ec3ff', soft: '#cde8ff' },
+                daun: { DEFAULT: '#3dbe72', soft: '#d6f2e0' },
             },
             fontFamily: {
-                display: ['Fredoka', 'ui-rounded', 'system-ui', 'sans-serif'],
+                display: ['"Baloo 2"', 'Fredoka', 'ui-rounded', 'system-ui', 'sans-serif'],
                 body: ['Nunito', 'system-ui', 'sans-serif'],
             },
         },

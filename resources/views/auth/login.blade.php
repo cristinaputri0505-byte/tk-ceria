@@ -6,14 +6,15 @@
     <title>Masuk — {{ $site['nama_sekolah'] }}</title>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-gradient-to-br from-sky-soft via-cloud to-sun-soft font-body text-ink grid place-items-center p-4">
+<body class="situs min-h-screen bg-cloud font-body text-ink grid place-items-center p-4">
+    <svg class="fixed top-6 right-6 w-20 h-20 hidden sm:block" viewBox="0 0 100 100" aria-hidden="true"><g stroke="#2b2140" stroke-width="4" stroke-linecap="round"><path d="M50 6v12M50 82v12M6 50h12M82 50h12M19 19l8 8M73 73l8 8M19 81l8-8M73 27l8-8"/></g><circle cx="50" cy="50" r="22" fill="#ffc53d" stroke="#2b2140" stroke-width="3"/></svg>
     <main class="w-full max-w-md">
         <a href="{{ route('home') }}" class="flex items-center justify-center gap-3 mb-6">
             @include('partials.logo', ['size' => 56])
-            <span class="font-display text-3xl font-semibold text-navy">{{ $site['nama_sekolah'] }}</span>
+            <span class="font-display text-3xl font-extrabold text-navy">{{ $site['nama_sekolah'] }}</span>
         </a>
-        <div class="bg-white rounded-3xl p-8 shadow-[0_20px_60px_-30px_rgba(20,48,125,.35)]">
-            <h1 class="font-display text-2xl font-semibold text-navy">{{ $site['login_judul'] }}</h1>
+        <div class="bg-white rounded-3xl p-8">
+            <h1 class="font-display text-3xl font-extrabold text-navy">{{ $site['login_judul'] }}</h1>
             <p class="text-sm text-slate-500 mt-1">{{ $site['login_sub'] }}</p>
 
             <form method="POST" action="{{ route('login.attempt') }}" class="mt-6 space-y-4">

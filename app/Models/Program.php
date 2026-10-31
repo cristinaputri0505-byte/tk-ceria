@@ -8,11 +8,11 @@ class Program extends Model
 {
     /** warna => [latar kartu, latar+warna ikon] */
     public const KELAS_WARNA = [
-        'rose' => ['bg-rose-50', 'bg-rose-100 text-rose-500'],
-        'amber' => ['bg-amber-50', 'bg-amber-100 text-amber-500'],
-        'violet' => ['bg-violet-50', 'bg-violet-100 text-violet-500'],
-        'emerald' => ['bg-emerald-50', 'bg-emerald-100 text-emerald-600'],
-        'sky' => ['bg-sky-50', 'bg-sky-100 text-sky-600'],
+        'rose' => ['bg-permen-soft', 'bg-permen text-navy border-2 border-navy'],
+        'amber' => ['bg-sun-soft', 'bg-sun text-navy border-2 border-navy'],
+        'violet' => ['bg-anggur-soft', 'bg-anggur text-navy border-2 border-navy'],
+        'emerald' => ['bg-daun-soft', 'bg-daun text-navy border-2 border-navy'],
+        'sky' => ['bg-langit-soft', 'bg-langit text-navy border-2 border-navy'],
     ];
 
     public function getKelasWarnaAttribute(): array

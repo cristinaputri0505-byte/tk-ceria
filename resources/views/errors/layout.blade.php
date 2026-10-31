@@ -7,7 +7,7 @@
     <title>@yield('kode') · {{ $site['nama_sekolah'] ?? 'TK Ceria' }}</title>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-gradient-to-br from-sky-soft via-cloud to-sun-soft font-body text-ink grid place-items-center p-4">
+<body class="situs min-h-screen bg-cloud font-body text-ink grid place-items-center p-4">
     <main class="w-full max-w-lg text-center">
         <a href="{{ url('/') }}" class="inline-flex items-center gap-3">@include('partials.logo', ['size' => 48])<span class="font-display text-2xl font-semibold text-navy">{{ $site['nama_sekolah'] ?? 'TK Ceria' }}</span></a>
         <div class="bg-white rounded-[2rem] p-8 sm:p-10 mt-6 shadow-[0_20px_60px_-30px_rgba(20,48,125,.35)]">

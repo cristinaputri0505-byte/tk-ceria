@@ -119,35 +119,41 @@
             ['Chat', 'chat.pribadi', 'message-circle', 'chat.*'],
         ])),
     };
+    // Warna khas tiap panel: admin hijau, guru oranye, orang tua biru langit
+    [$warnaPanel, $labelPanel] = match ($user->role) {
+        'admin' => ['bg-daun-soft', 'bg-daun'],
+        'guru' => ['bg-jeruk-soft', 'bg-jeruk'],
+        default => ['bg-langit-soft', 'bg-langit'],
+    };
 @endphp
-<body class="dash bg-cloud font-body text-ink antialiased">
+<body class="dash peran-{{ $user->role }} bg-cloud font-body text-ink antialiased">
 {{-- Latar gelap di belakang menu samping (HP) --}}
 <div id="sidebar-latar" onclick="toggleSidebar(false)" class="print:hidden lg:hidden fixed inset-0 z-40 bg-navy-deep/60 backdrop-blur-[2px] opacity-0 pointer-events-none transition-opacity duration-300"></div>
 <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr] print:block">
-    <aside id="sidebar" class="print:!hidden fixed inset-y-0 left-0 z-50 w-[86%] max-w-[320px] -translate-x-full transition-transform duration-300 ease-out rounded-r-3xl shadow-2xl lg:shadow-none lg:rounded-none lg:w-auto lg:max-w-none lg:translate-x-0 lg:transition-none flex flex-col bg-navy-deep text-white lg:sticky lg:top-0 lg:h-screen" aria-label="Menu">
-        <a href="{{ route('home') }}" class="flex items-center gap-3 px-6 h-20 border-b border-white/10">
+    <aside id="sidebar" class="print:!hidden fixed inset-y-0 left-0 z-50 w-[86%] max-w-[320px] -translate-x-full transition-transform duration-300 ease-out rounded-r-3xl shadow-2xl lg:shadow-none lg:rounded-none lg:w-auto lg:max-w-none lg:translate-x-0 lg:transition-none flex flex-col {{ $warnaPanel }} text-navy border-r-[2.5px] border-navy lg:sticky lg:top-0 lg:h-screen" aria-label="Menu">
+        <a href="{{ route('home') }}" class="flex items-center gap-3 px-6 h-20 border-b-2 border-navy/15">
             @include('partials.logo', ['size' => 40])
             <span>
                 <span class="block font-display text-xl font-semibold leading-none">{{ $site['nama_sekolah'] }}</span>
-                <span class="block text-[11px] text-white/60 mt-1">Panel {{ $user->roleLabel() }}</span>
+                <span class="inline-block text-[11px] font-extrabold mt-1 px-2.5 py-0.5 rounded-full border-2 border-navy {{ $labelPanel }}">Panel {{ $user->roleLabel() }}</span>
             </span>
         </a>
-        <button type="button" onclick="toggleSidebar(false)" class="lg:hidden absolute right-4 top-6 p-1.5 rounded-xl text-white/80 hover:bg-white/10" aria-label="Tutup menu"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        <button type="button" onclick="toggleSidebar(false)" class="lg:hidden absolute right-4 top-6 p-1.5 rounded-xl text-navy hover:bg-white" aria-label="Tutup menu"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
         {{-- Kartu akun + tombol Keluar (HP) --}}
-        <div class="lg:hidden mx-4 mt-4 p-3 rounded-2xl bg-white/[.07] flex items-center gap-3">
-            @include('partials.avatar', ['u' => $user, 'kelas' => 'w-11 h-11 shrink-0 rounded-full bg-sun text-navy font-display text-lg grid place-items-center'])
+        <div class="lg:hidden mx-4 mt-4 p-3 rounded-2xl bg-white border-2 border-navy flex items-center gap-3">
+            @include('partials.avatar', ['u' => $user, 'kelas' => 'w-11 h-11 shrink-0 rounded-full bg-sun text-navy border-2 border-navy font-display text-lg grid place-items-center'])
             <span class="min-w-0 flex-1">
                 <span class="block text-sm font-bold truncate">{{ $user->name }}</span>
-                <span class="block text-xs text-white/60 truncate">{{ $user->email }}</span>
+                <span class="block text-xs text-ink truncate">{{ $user->email }}</span>
             </span>
             <form method="POST" action="{{ route('logout') }}">@csrf
-                <button class="flex items-center gap-1.5 text-xs font-extrabold bg-berry/90 hover:bg-berry text-white px-3 py-2 rounded-xl" aria-label="Keluar dari akun"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> Keluar</button>
+                <button class="flex items-center gap-1.5 text-xs font-extrabold bg-berry text-white px-3 py-2 rounded-xl" aria-label="Keluar dari akun"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> Keluar</button>
             </form>
         </div>
         <nav class="flex-1 p-4 space-y-0.5 overflow-y-auto" aria-label="Menu dashboard">
             @foreach ($nav as $item)
                 @if (isset($item['group']))
-                    <p class="px-4 pt-4 pb-1 text-[11px] font-extrabold text-white/40">{{ $item['group'] }}</p>
+                    <p class="px-4 pt-4 pb-1 text-[11px] font-extrabold uppercase tracking-wider text-ink">{{ $item['group'] }}</p>
                     @continue
                 @endif
                 @php
@@ -157,29 +163,29 @@
                     $jumlah = is_string($route) ? ($badge[$route] ?? 0) : 0;
                 @endphp
                 <a href="{{ $href }}" @if($active) aria-current="page" @endif
-                   class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold {{ $active ? 'bg-sun text-navy' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                   class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-extrabold {{ $active ? 'bg-sun text-navy' : 'text-navy hover:bg-white/70' }}">
                     <i data-lucide="{{ $icon }}" class="w-[18px] h-[18px]"></i> {{ $label }}
-                    @if ($jumlah)<span class="ml-auto text-[11px] bg-berry text-white rounded-full px-2 py-0.5">{{ $jumlah > 99 ? '99+' : $jumlah }}</span>@endif
+                    @if ($jumlah)<span class="ml-auto text-[11px] bg-permen text-navy border-2 border-navy rounded-full px-2 py-0">{{ $jumlah > 99 ? '99+' : $jumlah }}</span>@endif
                 </a>
             @endforeach
         </nav>
-        <div class="hidden lg:block p-4 border-t border-white/10">
-            <p class="text-sm font-bold truncate">{{ $user->name }}</p>
-            <p class="text-xs text-white/60 truncate">{{ $user->email }}</p>
+        <div class="hidden lg:block p-4 border-t-2 border-navy/15">
+            <p class="text-sm font-extrabold truncate">{{ $user->name }}</p>
+            <p class="text-xs text-ink truncate">{{ $user->email }}</p>
             <form method="POST" action="{{ route('logout') }}" class="mt-3">@csrf
-                <button class="flex items-center gap-2 text-sm font-bold text-white/80 hover:text-white"><i data-lucide="log-out" class="w-4 h-4"></i> Keluar</button>
+                <button class="flex items-center gap-2 text-sm font-extrabold text-navy hover:text-berry"><i data-lucide="log-out" class="w-4 h-4"></i> Keluar</button>
             </form>
         </div>
     </aside>
 
     <div class="min-w-0">
-        <header class="print:hidden h-16 lg:h-20 bg-white border-b border-slate-100 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+        <header class="print:hidden h-16 lg:h-20 bg-cloud/95 backdrop-blur border-b-[2.5px] border-navy flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
             <div class="flex items-center gap-3 min-w-0">
                 <button type="button" class="lg:hidden p-2 -ml-2 rounded-xl text-navy hover:bg-cloud" aria-label="Buka menu"
                     onclick="toggleSidebar(true)">
                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
                 </button>
-                <h1 class="font-display text-xl lg:text-2xl font-semibold text-navy truncate">@yield('heading')</h1>
+                <h1 class="font-display text-xl lg:text-3xl font-bold text-navy truncate">@yield('heading')</h1>
             </div>
             <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
                 @yield('actions')
@@ -200,8 +206,8 @@
                     <i data-lucide="bell" class="w-5 h-5"></i>
                     <span id="badge-notif" style="{{ $notifBelum ? '' : 'display:none' }}" class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-[10px] font-extrabold bg-berry text-white rounded-full grid place-items-center">{{ $notifBelum > 99 ? '99+' : $notifBelum }}</span>
                 </a>
-                @include('partials.avatar', ['u' => $user, 'kelas' => 'hidden sm:grid w-10 h-10 rounded-full bg-sky-soft text-sky font-display text-lg place-items-center'])
-                @include('partials.avatar', ['u' => $user, 'tag' => 'button', 'atribut' => 'type="button" onclick="toggleSidebar(true)" aria-label="Akun &amp; menu"', 'kelas' => 'sm:hidden w-9 h-9 rounded-full bg-sky-soft text-sky font-display text-base grid place-items-center'])
+                @include('partials.avatar', ['u' => $user, 'kelas' => 'hidden sm:grid w-10 h-10 rounded-full bg-sun text-navy border-2 border-navy font-display text-lg place-items-center'])
+                @include('partials.avatar', ['u' => $user, 'tag' => 'button', 'atribut' => 'type="button" onclick="toggleSidebar(true)" aria-label="Akun &amp; menu"', 'kelas' => 'sm:hidden w-9 h-9 rounded-full bg-sun text-navy border-2 border-navy font-display text-base grid place-items-center'])
             </div>
         </header>
         @if (session('admin_asli'))
@@ -221,7 +227,7 @@
 {{-- Menu bawah (HP) --}}
 <style>
     @keyframes naik { from { transform: translateY(12px); opacity: 0 } to { transform: none; opacity: 1 } }
-    html.dark .nav-bawah { background-color: rgba(21, 34, 56, .95); border-color: #24365a; }
+    html.dark .nav-bawah { background-color: #2a2245; border-color: #0e0b1a; box-shadow: 4px 4px 0 #0e0b1a; }
     @media (max-width: 1023px) { .chat-ruang { height: calc(100dvh - 16rem) !important; } }
 </style>
 @if ($pilihanChat)
@@ -251,27 +257,27 @@
 </div>
 @endif
 <nav class="print:hidden lg:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 pointer-events-none" aria-label="Menu cepat">
-    <div class="nav-bawah pointer-events-auto mx-auto max-w-md grid grid-cols-5 bg-white/95 backdrop-blur border border-slate-100 rounded-2xl shadow-[0_8px_30px_rgba(15,38,80,.15)]">
+    <div class="nav-bawah pointer-events-auto mx-auto max-w-md grid grid-cols-5 bg-white border-[2.5px] border-navy rounded-2xl shadow-[4px_4px_0_#2b2140]">
         @foreach ($navBawah as [$label, $route, $icon, $pattern])
             @php
                 $aktif = request()->routeIs($pattern);
                 $jumlah = $label === 'Chat' ? collect($badge)->filter(fn ($v, $k) => str_starts_with($k, 'chat.'))->sum() : ($badge[$route] ?? 0);
             @endphp
             @if ($label === 'Chat' && $pilihanChat)
-            <button type="button" onclick="pilihChat(true)" aria-haspopup="dialog" @if($aktif) aria-current="page" @endif class="relative flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold {{ $aktif ? 'text-sky' : 'text-slate-500' }}">
-                <span class="grid place-items-center w-11 h-7 rounded-full {{ $aktif ? 'bg-sky-soft' : '' }}"><i data-lucide="{{ $icon }}" class="w-5 h-5"></i></span>
+            <button type="button" onclick="pilihChat(true)" aria-haspopup="dialog" @if($aktif) aria-current="page" @endif class="relative flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold {{ $aktif ? 'text-navy' : 'text-ink' }}">
+                <span class="grid place-items-center w-11 h-7 rounded-full {{ $aktif ? 'bg-sun border-2 border-navy' : '' }}"><i data-lucide="{{ $icon }}" class="w-5 h-5"></i></span>
                 {{ $label }}
                 @if ($jumlah)<span class="absolute top-1 right-[calc(50%-1.4rem)] min-w-[18px] h-[18px] px-1 text-[10px] bg-berry text-white rounded-full grid place-items-center">{{ $jumlah > 99 ? '99+' : $jumlah }}</span>@endif
             </button>
             @continue
             @endif
-            <a href="{{ route($route) }}" @if($aktif) aria-current="page" @endif class="relative flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold {{ $aktif ? 'text-sky' : 'text-slate-500' }}">
-                <span class="grid place-items-center w-11 h-7 rounded-full {{ $aktif ? 'bg-sky-soft' : '' }}"><i data-lucide="{{ $icon }}" class="w-5 h-5"></i></span>
+            <a href="{{ route($route) }}" @if($aktif) aria-current="page" @endif class="relative flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold {{ $aktif ? 'text-navy' : 'text-ink' }}">
+                <span class="grid place-items-center w-11 h-7 rounded-full {{ $aktif ? 'bg-sun border-2 border-navy' : '' }}"><i data-lucide="{{ $icon }}" class="w-5 h-5"></i></span>
                 {{ $label }}
                 @if ($jumlah)<span class="absolute top-1 right-[calc(50%-1.4rem)] min-w-[18px] h-[18px] px-1 text-[10px] bg-berry text-white rounded-full grid place-items-center">{{ $jumlah > 99 ? '99+' : $jumlah }}</span>@endif
             </a>
         @endforeach
-        <button type="button" onclick="toggleSidebar(true)" class="flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold text-slate-500" aria-label="Semua menu">
+        <button type="button" onclick="toggleSidebar(true)" class="flex flex-col items-center gap-0.5 py-2 text-[11px] font-extrabold text-ink" aria-label="Semua menu">
             <span class="grid place-items-center w-11 h-7 rounded-full"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
             Menu
         </button>
