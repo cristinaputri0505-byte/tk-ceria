@@ -84,6 +84,7 @@
     html.dark .bg-sun-soft { background-color: #3b3114; }
     html.dark .bg-leaf-soft { background-color: #12382a; }
     html.dark .bg-rose-50 { background-color: #3a1a26; }
+    html.dark .bg-sky-50 { background-color: #16294a; }
     html.dark .bg-rose-100 { background-color: #4a2030; }
     html.dark .bg-amber-50 { background-color: #3a2f12; }
     html.dark .bg-amber-100 { background-color: #4a3a14; }

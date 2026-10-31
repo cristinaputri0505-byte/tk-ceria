@@ -35,8 +35,8 @@
         g.className = 'max-w-[80%] rounded-2xl px-4 py-2 ' + (m.mine ? 'bg-sky text-white rounded-br-md' : 'bg-cloud text-navy rounded-bl-md');
         if (!m.mine && NAMA) {
             const n = document.createElement('p');
-            n.className = 'text-[11px] font-extrabold mb-0.5 ' + (m.admin ? 'text-berry' : 'text-sky');
-            n.textContent = m.nama + (m.admin ? ' · Admin' : '');
+            n.className = 'text-[11px] font-extrabold mb-0.5 ' + (m.admin ? 'text-berry' : m.guru ? 'text-emerald-600' : 'text-sky');
+            n.textContent = m.nama + (m.admin ? ' · Admin' : m.guru ? ' · Guru' : '');
             g.appendChild(n);
         }
         const t = document.createElement('p');

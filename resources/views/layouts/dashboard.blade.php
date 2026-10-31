@@ -46,6 +46,8 @@
             ['Laporan Perkembangan', 'guru.perkembangan.index', 'sprout', 'guru.perkembangan.*'],
             ['Dokumentasi Kelas', 'guru.dokumentasi.index', 'camera', 'guru.dokumentasi.*'],
             ['E-Learning Anak', 'elearning.index', 'gamepad-2', 'elearning.*'],
+            ['group' => 'Komunikasi'],
+            ['Grup Orang Tua', 'chat.grup', 'users-round', 'chat.grup*'],
         ],
         default => [
             ['Beranda', 'orangtua.dashboard', 'house', 'orangtua.dashboard'],
@@ -79,6 +81,9 @@
             'chat.pribadi' => \App\Models\ChatPesan::belumPribadi($user),
             'chat.grup' => \App\Models\ChatPesan::belumGrup($user),
         ],
+        'guru' => [
+            'chat.grup' => \App\Models\ChatPesan::belumGrup($user),
+        ],
         default => [],
     }, [], false);
     // Menu bawah (khusus HP): 4 pintasan + tombol "Menu"
@@ -86,11 +91,11 @@
     $pilihanChat = match ($user->role) {
         'admin' => [
             ['Chat Pribadi', 'Percakapan satu-satu dengan tiap orang tua', 'chat.index', 'message-circle', 'bg-sky-soft text-sky'],
-            ['Grup Orang Tua', 'Satu ruang untuk admin & semua orang tua', 'chat.grup', 'users-round', 'bg-leaf-soft text-emerald-600'],
+            ['Grup Orang Tua', 'Satu ruang untuk admin, guru & semua orang tua', 'chat.grup', 'users-round', 'bg-leaf-soft text-emerald-600'],
         ],
         'orangtua' => [
             ['Chat dengan Admin', 'Percakapan pribadi, hanya Anda & admin', 'chat.pribadi', 'message-circle', 'bg-sky-soft text-sky'],
-            ['Grup Orang Tua', 'Ngobrol bersama admin & semua orang tua', 'chat.grup', 'users-round', 'bg-leaf-soft text-emerald-600'],
+            ['Grup Orang Tua', 'Ngobrol bersama admin, guru & semua orang tua', 'chat.grup', 'users-round', 'bg-leaf-soft text-emerald-600'],
         ],
         default => [],
     };

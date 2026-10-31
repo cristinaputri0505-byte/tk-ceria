@@ -105,7 +105,7 @@ class ChatController extends Controller
 
         $m = ChatPesan::create(['jenis' => 'grup', 'pengirim_id' => $user->id, 'isi' => trim($request->isi)]);
 
-        Notifikasi::kirim(User::whereIn('role', [User::ORANG_TUA, User::ADMIN])->where('id', '!=', $user->id)->pluck('id'),
+        Notifikasi::kirim(User::whereIn('role', [User::ORANG_TUA, User::GURU, User::ADMIN])->where('id', '!=', $user->id)->pluck('id'),
             'chat', 'Grup Orang Tua', $user->name . ': ' . Str::limit($m->isi, 80), route('chat.grup', [], false));
 
         return response()->json(['ok' => true]);
@@ -145,6 +145,7 @@ class ChatController extends Controller
             'mine' => (int) $m->pengirim_id === (int) $saya->id,
             'nama' => $m->pengirim->name ?? 'Pengguna',
             'admin' => ($m->pengirim->role ?? null) === User::ADMIN,
+            'guru' => ($m->pengirim->role ?? null) === User::GURU,
             'isi' => $m->isi,
             'jam' => $t->format('H.i'),
             'tgl' => $t->translatedFormat('l, d F Y'),
