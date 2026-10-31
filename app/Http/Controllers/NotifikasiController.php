@@ -33,6 +33,12 @@ class NotifikasiController extends Controller
         abort_unless((int) $notifikasi->user_id === (int) $request->user()->id, 403);
         if (! $notifikasi->dibaca_at) $notifikasi->update(['dibaca_at' => now()]);
 
+        // Fitur portal yang sudah dimatikan admin: jangan arahkan ke halaman yang kini 404.
+        $fitur = $this->fiturDariUrl((string) $notifikasi->url);
+        if ($fitur && ! \App\Support\Pengaturan::fitur($fitur)) {
+            return redirect()->route('notifikasi.index')->with('error', 'Halaman untuk notifikasi ini sedang tidak tersedia karena fiturnya dinonaktifkan sekolah.');
+        }
+
         return redirect($notifikasi->url ?: route('notifikasi.index'));
     }
 
@@ -43,5 +49,16 @@ class NotifikasiController extends Controller
             ->update(['dibaca_at' => now()]);
 
         return back();
+    }
+
+    /** Nama fitur portal (Pengaturan::fitur) yang dibutuhkan alamat ini, atau null. */
+    private function fiturDariUrl(string $url): ?string
+    {
+        $path = '/' . ltrim((string) parse_url($url, PHP_URL_PATH), '/');
+        foreach (['/orangtua/pembayaran' => 'pembayaran', '/orangtua/pengumuman' => 'pengumuman', '/orangtua/dokumentasi' => 'dokumentasi', '/belajar' => 'belajar'] as $awal => $fitur) {
+            if ($path === $awal || str_starts_with($path, $awal . '/')) return $fitur;
+        }
+
+        return null;
     }
 }
