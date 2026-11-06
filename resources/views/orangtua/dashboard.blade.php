@@ -17,6 +17,13 @@
 
 {{-- Sapaan --}}
 <section class="relative overflow-hidden rounded-[2rem] border-[2.5px] border-navy shadow-[5px_5px_0_#2b2140] p-6 sm:p-8 {{ $bannerSapa ? 'bg-navy text-white' : 'bg-langit text-navy' }}">
+    @unless ($bannerSapa)
+        <span class="pointer-events-none absolute inset-0" aria-hidden="true">
+            @foreach ([[62, 18, 14], [74, 62, 10], [52, 72, 12], [86, 80, 9], [40, 12, 9]] as [$x, $y, $u])
+                <svg class="anim-kelip absolute" style="left: {{ $x }}%; top: {{ $y }}%; width: {{ $u }}px; height: {{ $u }}px" viewBox="0 0 24 24"><path d="M12 2l2.6 6.8L22 12l-7.4 3.2L12 22l-2.6-6.8L2 12l7.4-3.2z" fill="#fff" stroke="#2b2140" stroke-width="2"/></svg>
+            @endforeach
+        </span>
+    @endunless
     @if ($bannerSapa)
         <img src="{{ $bannerSapa }}" alt="" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-r from-navy-deep/90 via-navy-deep/60 to-transparent"></div>

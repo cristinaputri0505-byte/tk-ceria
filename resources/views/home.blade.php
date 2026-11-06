@@ -29,7 +29,7 @@
             </h1>
             <p class="mt-6 text-lg leading-relaxed max-w-lg text-ink">{{ $site['hero_deskripsi'] }}</p>
             <div class="mt-8 flex flex-wrap gap-4">
-                <a href="{{ route('pendaftaran.create') }}" class="inline-flex items-center gap-2 bg-daun text-navy font-display font-bold text-lg px-6 py-3 rounded-2xl">
+                <a href="{{ route('pendaftaran.create') }}" class="anim-denyut inline-flex items-center gap-2 bg-daun text-navy font-display font-bold text-lg px-6 py-3 rounded-2xl">
                     Daftar Murid Baru <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
                 <a href="{{ route('tentang') }}" class="inline-flex items-center gap-2 bg-white text-navy font-display font-bold text-lg px-6 py-3 rounded-xl">
@@ -49,20 +49,8 @@
                     @if ($hero)
                         <img src="{{ $hero }}" alt="Anak-anak {{ $site['nama_sekolah'] }}" class="absolute inset-0 w-full h-full object-cover">
                     @else
-                        {{-- Ilustrasi pengganti: unggah foto di Pengaturan Halaman --}}
-                        <svg viewBox="0 0 600 450" class="w-full h-full" preserveAspectRatio="xMidYMax slice" aria-label="Ilustrasi anak-anak bermain">
-                            <path d="M0 330c120-40 220-40 320 0s200 40 280 0v120H0z" fill="#3dbe72" stroke="#2b2140" stroke-width="4"/>
-                            <rect x="390" y="170" width="120" height="120" rx="10" fill="#fff" stroke="#2b2140" stroke-width="4"/>
-                            <path d="M380 180l70-60 70 60z" fill="#ff8fb1" stroke="#2b2140" stroke-width="4" stroke-linejoin="round"/>
-                            <circle cx="450" cy="220" r="16" fill="#6ec3ff" stroke="#2b2140" stroke-width="3"/>
-                            @foreach ([[110,'#ffc53d'],[200,'#ff8fb1'],[290,'#b9a4ff']] as [$x,$baju])
-                                <circle cx="{{ $x }}" cy="265" r="30" fill="#fcd9b6" stroke="#2b2140" stroke-width="3"/>
-                                <path d="M{{ $x-30 }} 260a30 30 0 0 1 60 0c-10-14-50-14-60 0z" fill="#4a3020"/>
-                                <circle cx="{{ $x-10 }}" cy="268" r="3" fill="#2b2140"/><circle cx="{{ $x+10 }}" cy="268" r="3" fill="#2b2140"/>
-                                <path d="M{{ $x-9 }} 280q9 8 18 0" stroke="#2b2140" stroke-width="3" fill="none" stroke-linecap="round"/>
-                                <rect x="{{ $x-32 }}" y="296" width="64" height="70" rx="22" fill="{{ $baju }}" stroke="#2b2140" stroke-width="3"/>
-                            @endforeach
-                        </svg>
+                        {{-- Ilustrasi pengganti (bergerak): unggah foto di Pengaturan Halaman untuk menggantinya --}}
+                        @include('partials.ilustrasi-sekolah')
                     @endif
                 </div>
             </figure>
@@ -168,7 +156,7 @@
         @php $th = now()->month >= 7 ? now()->year + 1 : now()->year; @endphp
         <p class="font-display text-xl font-bold text-navy mt-1">Tahun Ajaran {{ $site['daftar_tahun'] ?: $th.'/'.($th + 1) }}</p>
         <p class="text-[15px] font-semibold text-navy mt-3 max-w-md">{{ $site['daftar_deskripsi'] }}</p>
-        <a href="{{ route('pendaftaran.create') }}" class="inline-flex items-center gap-2 bg-sun text-navy font-display font-bold text-lg px-6 py-3 rounded-2xl mt-6">
+        <a href="{{ route('pendaftaran.create') }}" class="anim-denyut inline-flex items-center gap-2 bg-sun text-navy font-display font-bold text-lg px-6 py-3 rounded-2xl mt-6">
             {{ $site['daftar_tombol'] }} <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </a>
         <ul class="flex flex-wrap gap-2 mt-6 text-[13px] font-extrabold text-navy">

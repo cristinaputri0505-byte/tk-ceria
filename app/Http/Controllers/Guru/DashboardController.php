@@ -19,6 +19,11 @@ class DashboardController extends Controller
         // Status absensi tiap anak hari ini, untuk "Absen cepat" di ringkasan
         $statusHariIni = Absensi::whereIn('kelas_id', $kelas->pluck('id'))->whereDate('tanggal', today())->pluck('status', 'siswa_id');
 
-        return view('guru.dashboard', compact('kelas', 'absenHariIni', 'statusHariIni'));
+        // Kehadiran guru sendiri hari ini (absen masuk / pulang)
+        $kehadiranSaya = \App\Models\GuruKehadiran::aktif()
+            ? \App\Models\GuruKehadiran::where('user_id', $request->user()->id)->where('tanggal', today()->toDateString())->first()
+            : false;
+
+        return view('guru.dashboard', compact('kelas', 'absenHariIni', 'statusHariIni', 'kehadiranSaya'));
     }
 }

@@ -164,6 +164,8 @@ class Pengaturan
                 'portal_fitur_pengumuman' => ['Pengumuman & agenda', 'toggle', '1'],
                 'portal_fitur_dokumentasi' => ['Dokumentasi foto', 'toggle', '1'],
                 'portal_fitur_belajar' => ['Ruang Belajar anak (e-learning)', 'toggle', '1'],
+                ['group' => 'Kehadiran guru'],
+                'guru_jam_masuk' => ['Batas jam masuk guru', 'pilihan', '07:30', 'Guru yang absen masuk setelah jam ini ditandai "terlambat" di Rekap Guru.', \App\Models\GuruKehadiran::JAM_MASUK],
                 ['group' => 'Ruang Belajar anak'],
                 'belajar_nada' => ['Nada suara pembaca soal', 'pilihan', 'ceria', 'Suara dibuat di server dalam Bahasa Indonesia. Nada lebih tinggi terdengar lebih ceria untuk anak.',
                     array_map(fn ($n) => $n[0], \App\Support\Suara::NADA)],

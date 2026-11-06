@@ -20,6 +20,7 @@
             ['Absensi', 'admin.absensi.index', 'calendar-check', 'admin.absensi.*'],
             ['Perkembangan', 'admin.perkembangan.index', 'sprout', 'admin.perkembangan.*'],
             ['Rekap Siswa', 'admin.rekap.index', 'clipboard-list', 'admin.rekap.*'],
+            ['Rekap Guru', 'admin.rekap-guru.index', 'user-check', 'admin.rekap-guru.*'],
             ['E-Learning Anak', 'elearning.index', 'gamepad-2', 'elearning.*'],
             ['Akun Pengguna', 'admin.pengguna.index', 'key-round', 'admin.pengguna.*'],
             ['Reset Password', 'admin.reset.index', 'lock-keyhole', 'admin.reset.*'],

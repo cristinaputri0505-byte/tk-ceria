@@ -103,3 +103,51 @@
 
 /* Kartu yang dimiringkan tidak boleh membuat halaman bisa digeser ke samping di HP */
 body.situs, .dash main { overflow-x: clip; }
+
+/* ===== Animasi (diaktifkan oleh public/js/animasi.js, mati bila "kurangi gerakan") =====
+   Memakai properti translate/scale/rotate terpisah agar tidak menimpa kemiringan kartu. */
+@media (prefers-reduced-motion: no-preference) {
+    .animasi .muncul { transition: opacity .45s ease var(--tunda, 0ms), translate .6s cubic-bezier(.34, 1.56, .64, 1) var(--tunda, 0ms), scale .6s cubic-bezier(.34, 1.56, .64, 1) var(--tunda, 0ms); }
+    .animasi .muncul:not(.tampil) { opacity: 0; translate: 0 28px; scale: .96; }
+
+    .animasi .bar-isi { transition: width 1.1s cubic-bezier(.22, 1, .36, 1); }
+
+    .anim-putar { transform-box: fill-box; transform-origin: center; animation: anim-putar 16s linear infinite; }
+    .anim-melayang { animation: anim-melayang 4.5s ease-in-out infinite; }
+    .anim-denyut { animation: anim-denyut 2.4s ease-in-out infinite; }
+    .anim-kelip { animation: anim-kelip 2.2s ease-in-out infinite; }
+    .anim-kelip:nth-child(2n) { animation-delay: .7s; }
+    .anim-kelip:nth-child(3n) { animation-delay: 1.3s; }
+
+    /* Ilustrasi anak berangkat sekolah (beranda) */
+    .ilu-anak { animation: ilu-jalan .55s ease-in-out infinite alternate; }
+    .ilu-anak-2 { animation-delay: .18s; }
+    .ilu-anak-3 { animation-delay: .36s; }
+    .ilu-lambai { transform-box: fill-box; transform-origin: 0% 100%; animation: ilu-lambai .7s ease-in-out infinite alternate; }
+    .ilu-bola { animation: ilu-bola .6s cubic-bezier(.33, 0, .67, 1) infinite alternate; }
+    .ilu-awan { animation: ilu-awan 10s ease-in-out infinite alternate; }
+    .ilu-awan-2 { animation-duration: 14s; animation-direction: alternate-reverse; }
+    .ilu-burung { transform-box: fill-box; transform-origin: center; animation: ilu-kepak .35s ease-in-out infinite alternate; }
+    .ilu-burung-2 { animation-delay: .15s; }
+    .ilu-bendera { transform-box: fill-box; transform-origin: 0% 50%; animation: ilu-bendera 1.4s ease-in-out infinite alternate; }
+    .ilu-bunga { animation: ilu-bunga 2.6s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+
+    /* Kartu miring bergoyang saat disorot/disentuh (menggantikan "diluruskan") */
+    .animasi .miring-kiri:hover, .animasi .miring-kanan:hover { animation: anim-goyang .5s ease-in-out; }
+
+    /* Ikon di menu samping sedikit melompat saat disorot */
+    .dash aside nav a:hover > svg, .dash aside nav a:hover > i { animation: anim-lompat .45s ease; }
+}
+@keyframes ilu-jalan { to { translate: 0 -6px; } }
+@keyframes ilu-lambai { from { rotate: -18deg; } to { rotate: 22deg; } }
+@keyframes ilu-bola { from { translate: 0 0; } to { translate: 0 -34px; } }
+@keyframes ilu-awan { to { translate: 46px 0; } }
+@keyframes ilu-kepak { to { scale: 1 .45; } }
+@keyframes ilu-bendera { from { transform: skewY(0deg) scaleX(1); } to { transform: skewY(5deg) scaleX(.9); } }
+@keyframes ilu-bunga { from { rotate: -6deg; } to { rotate: 6deg; } }
+@keyframes anim-putar { to { rotate: 360deg; } }
+@keyframes anim-melayang { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+@keyframes anim-denyut { 0%, 100% { scale: 1; } 50% { scale: 1.045; } }
+@keyframes anim-kelip { 0%, 100% { opacity: .25; scale: .7; } 50% { opacity: 1; scale: 1; } }
+@keyframes anim-goyang { 0%, 100% { rotate: 0deg; } 25% { rotate: 2deg; } 75% { rotate: -2deg; } }
+@keyframes anim-lompat { 0%, 100% { translate: 0 0; } 40% { translate: 0 -4px; } }

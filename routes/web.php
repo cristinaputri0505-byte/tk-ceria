@@ -68,6 +68,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('perkembangan/{siswa}', [Guru\PerkembanganController::class, 'edit'])->name('perkembangan.edit');
     Route::post('perkembangan/{siswa}', [Guru\PerkembanganController::class, 'store'])->name('perkembangan.store');
     Route::get('rekap', [Guru\RekapController::class, 'index'])->name('rekap.index');
+    Route::get('rekap-guru', [Admin\RekapGuruController::class, 'index'])->name('rekap-guru.index');
+    Route::post('rekap-guru', [Admin\RekapGuruController::class, 'simpan'])->name('rekap-guru.simpan');
     Route::get('dokumentasi', [Guru\DokumentasiController::class, 'index'])->name('dokumentasi.index');
     Route::post('dokumentasi', [Guru\DokumentasiController::class, 'store'])->name('dokumentasi.store');
     Route::delete('dokumentasi/{dokumentasi}', [Guru\DokumentasiController::class, 'destroy'])->name('dokumentasi.destroy');
@@ -97,6 +99,7 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
     Route::get('perkembangan/{siswa}', [Guru\PerkembanganController::class, 'edit'])->name('perkembangan.edit');
     Route::post('perkembangan/{siswa}', [Guru\PerkembanganController::class, 'store'])->name('perkembangan.store');
     Route::get('rekap', [Guru\RekapController::class, 'index'])->name('rekap.index');
+    Route::post('kehadiran-saya', [Guru\KehadiranSayaController::class, 'store'])->middleware('throttle:20,1')->name('kehadiran.store');
     Route::get('dokumentasi', [Guru\DokumentasiController::class, 'index'])->name('dokumentasi.index');
     Route::post('dokumentasi', [Guru\DokumentasiController::class, 'store'])->name('dokumentasi.store');
     Route::delete('dokumentasi/{dokumentasi}', [Guru\DokumentasiController::class, 'destroy'])->name('dokumentasi.destroy');

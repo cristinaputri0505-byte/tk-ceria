@@ -8,6 +8,60 @@
 @endphp
 <p class="text-ink font-bold mb-5" data-tgl-wib>{{ now()->timezone('Asia/Jakarta')->translatedFormat('l, d F Y') }}</p>
 
+{{-- Kehadiran saya (absen masuk / pulang guru) --}}
+@if ($kehadiranSaya !== false)
+    @php $ks = $kehadiranSaya; @endphp
+    <section class="bg-white rounded-3xl p-5 sm:p-6 mb-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="min-w-0">
+                <h2 class="font-display text-2xl font-extrabold text-navy">Kehadiran saya hari ini</h2>
+                <p class="font-semibold text-ink mt-0.5">
+                    @if (! $ks)
+                        Belum absen. Tekan <b>Absen masuk</b> saat tiba di sekolah.
+                    @elseif ($ks->status === 'hadir')
+                        Masuk {{ $ks->jam_masuk ? str_replace(':', '.', $ks->jam_masuk) . ' WIB' : '—' }}@if ($ks->terlambat) <span class="inline-block text-xs font-extrabold text-navy bg-sun border-2 border-navy rounded-full px-2 py-0.5 ml-1">Terlambat</span>@endif
+                        · Pulang {{ $ks->jam_pulang ? str_replace(':', '.', $ks->jam_pulang) . ' WIB' : 'belum' }}
+                    @else
+                        Tercatat: <b>{{ \App\Models\GuruKehadiran::STATUS[$ks->status][0] }}</b>{{ $ks->keterangan ? ' — ' . $ks->keterangan : '' }}
+                    @endif
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                @if (! $ks || ($ks->status !== 'hadir'))
+                    <form method="POST" action="{{ route('guru.kehadiran.store') }}">@csrf<input type="hidden" name="aksi" value="masuk">
+                        <button class="inline-flex items-center gap-2 bg-daun text-navy font-extrabold px-5 py-2.5 rounded-xl"><i data-lucide="log-in" class="w-4 h-4"></i> Absen masuk</button>
+                    </form>
+                @elseif (! $ks->jam_pulang)
+                    <form method="POST" action="{{ route('guru.kehadiran.store') }}">@csrf<input type="hidden" name="aksi" value="pulang">
+                        <button class="inline-flex items-center gap-2 bg-sun text-navy font-extrabold px-5 py-2.5 rounded-xl"><i data-lucide="log-out" class="w-4 h-4"></i> Absen pulang</button>
+                    </form>
+                @else
+                    <span class="inline-flex items-center gap-2 bg-daun-soft text-navy font-extrabold px-4 py-2.5 rounded-xl border-2 border-navy"><i data-lucide="circle-check" class="w-4 h-4"></i> Selesai hari ini</span>
+                @endif
+            </div>
+        </div>
+        @if (! $ks || $ks->status !== 'hadir')
+            <details class="mt-4">
+                <summary class="cursor-pointer text-sm font-extrabold text-sky">Tidak bisa hadir hari ini? (izin / sakit / dinas luar)</summary>
+                <form method="POST" action="{{ route('guru.kehadiran.store') }}" class="mt-3 flex flex-wrap items-end gap-3">
+                    @csrf
+                    <div>
+                        <label for="ks_aksi" class="block text-sm font-bold text-navy mb-1.5">Keterangan kehadiran</label>
+                        <select id="ks_aksi" name="aksi" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                            @foreach (['izin', 'sakit', 'dinas'] as $k)<option value="{{ $k }}" @selected(($ks->status ?? '') === $k)>{{ \App\Models\GuruKehadiran::STATUS[$k][0] }}</option>@endforeach
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[12rem]">
+                        <label for="ks_ket" class="block text-sm font-bold text-navy mb-1.5">Alasan singkat</label>
+                        <input id="ks_ket" name="keterangan" maxlength="255" value="{{ $ks->keterangan ?? '' }}" placeholder="Contoh: demam, rapat KKG di dinas" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                    </div>
+                    <button class="bg-navy text-white text-sm font-extrabold px-5 py-2.5 rounded-xl">Kirim</button>
+                </form>
+            </details>
+        @endif
+    </section>
+@endif
+
 @forelse ($kelas as $k)
     @php $rekap = ($absenHariIni[$k->id] ?? collect())->pluck('total', 'status'); $tercatat = $rekap->sum(); @endphp
 
