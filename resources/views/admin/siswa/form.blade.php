@@ -13,9 +13,8 @@
         @include('partials.field', ['name' => 'panggilan', 'label' => 'Nama panggilan', 'value' => $siswa->panggilan, 'required' => false])
         @include('partials.select', ['name' => 'jenis_kelamin', 'label' => 'Jenis kelamin', 'value' => $siswa->jenis_kelamin, 'options' => ['L' => 'Laki-laki', 'P' => 'Perempuan']])
         @include('partials.field', ['name' => 'tempat_lahir', 'label' => 'Tempat lahir', 'value' => $siswa->tempat_lahir, 'required' => false])
-        @include('partials.field', ['name' => 'tanggal_lahir', 'label' => 'Tanggal lahir', 'type' => 'date', 'value' => $siswa->tanggal_lahir?->format('Y-m-d'),
-            'attrs' => 'min='.today()->subYears(12)->toDateString().' max='.today()->subYear()->toDateString(),
-            'hint' => 'Di HP, ketuk angka tahun di bagian atas kalender untuk langsung memilih tahun lahir.'])
+        @include('partials.tanggal-pilih', ['name' => 'tanggal_lahir', 'label' => 'Tanggal lahir', 'value' => $siswa->tanggal_lahir?->format('Y-m-d'),
+            'tahunAkhir' => today()->year, 'tahunAwal' => today()->year - 15])
         @include('partials.select', ['name' => 'agama', 'label' => 'Agama', 'value' => $siswa->agama, 'required' => false, 'placeholder' => '—', 'options' => array_combine($a = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'], $a)])
         @include('partials.field', ['name' => 'anak_ke', 'label' => 'Anak ke', 'type' => 'number', 'value' => $siswa->anak_ke, 'required' => false, 'attrs' => 'min=1'])
         @include('partials.field', ['name' => 'tanggal_masuk', 'label' => 'Tanggal masuk', 'type' => 'date', 'value' => $siswa->tanggal_masuk?->format('Y-m-d'), 'required' => false])

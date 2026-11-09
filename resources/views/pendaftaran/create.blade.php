@@ -14,9 +14,9 @@
         <fieldset class="grid sm:grid-cols-2 gap-5">
             <legend class="font-display text-xl font-semibold text-navy mb-4">Data anak</legend>
             @include('partials.field', ['name' => 'nama_anak', 'label' => 'Nama lengkap anak', 'class' => 'sm:col-span-2'])
-            @include('partials.field', ['name' => 'tanggal_lahir', 'label' => 'Tanggal lahir', 'type' => 'date',
-                'attrs' => 'min='.today()->subYears(8)->toDateString().' max='.today()->subYears(2)->toDateString(),
-                'hint' => 'Usia anak 2–8 tahun. Di HP, ketuk angka tahun di bagian atas kalender untuk langsung memilih tahun lahir.'])
+            @include('partials.tanggal-pilih', ['name' => 'tanggal_lahir', 'label' => 'Tanggal lahir anak',
+                'tahunAkhir' => today()->subYears(2)->year, 'tahunAwal' => today()->subYears(8)->year,
+                'hint' => 'Pilih tanggal, bulan, lalu tahun lahir. Usia anak 2–8 tahun.'])
             @include('partials.select', ['name' => 'jenis_kelamin', 'label' => 'Jenis kelamin', 'options' => ['L' => 'Laki-laki', 'P' => 'Perempuan']])
             @include('partials.select', ['name' => 'program', 'label' => 'Program yang dipilih', 'class' => 'sm:col-span-2',
                 'options' => $programs->mapWithKeys(fn ($p) => [$p->nama => $p->nama.' ('.$p->keterangan.')'])->all()])

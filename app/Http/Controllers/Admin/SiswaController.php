@@ -70,6 +70,7 @@ class SiswaController extends Controller
 
     private function validated(Request $request, ?Siswa $siswa = null): array
     {
+        \App\Support\Tanggal::gabung($request, 'tanggal_lahir');
         $data = $request->validate([
             'nis' => ['required', 'string', 'max:20', Rule::unique('siswa', 'nis')->ignore($siswa)],
             'nama' => 'required|string|max:100',

@@ -15,6 +15,7 @@ class PendaftaranController extends Controller
 
     public function store(Request $request)
     {
+        \App\Support\Tanggal::gabung($request, 'tanggal_lahir');
         $data = $request->validate([
             'nama_anak' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date|after_or_equal:'.today()->subYears(8)->toDateString().'|before_or_equal:'.today()->subYears(2)->toDateString(),
@@ -28,6 +29,8 @@ class PendaftaranController extends Controller
             'izin_foto_publik' => 'nullable|boolean',
         ], [
             'setuju_privasi.accepted' => 'Pendaftaran memerlukan persetujuan Kebijakan Privasi.',
+            'tanggal_lahir.required' => 'Pilih tanggal, bulan, dan tahun lahir anak.',
+            'tanggal_lahir.date' => 'Tanggal lahir tidak ada di kalender (contoh: 31 Februari). Periksa kembali.',
             'tanggal_lahir.after_or_equal' => 'Tanggal lahir tidak sesuai: usia anak paling tua 8 tahun.',
             'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak sesuai: usia anak minimal 2 tahun. Pastikan tahun lahir sudah dipilih dengan benar.',
         ]);
