@@ -17,7 +17,7 @@ class PendaftaranController extends Controller
     {
         $data = $request->validate([
             'nama_anak' => 'required|string|max:100',
-            'tanggal_lahir' => 'required|date|before:today',
+            'tanggal_lahir' => 'required|date|after_or_equal:'.today()->subYears(8)->toDateString().'|before_or_equal:'.today()->subYears(2)->toDateString(),
             'jenis_kelamin' => 'required|in:L,P',
             'program' => 'required|string|max:100',
             'nama_orang_tua' => 'required|string|max:100',
@@ -26,7 +26,11 @@ class PendaftaranController extends Controller
             'alamat' => 'required|string|max:255',
             'setuju_privasi' => 'accepted',
             'izin_foto_publik' => 'nullable|boolean',
-        ], ['setuju_privasi.accepted' => 'Pendaftaran memerlukan persetujuan Kebijakan Privasi.']);
+        ], [
+            'setuju_privasi.accepted' => 'Pendaftaran memerlukan persetujuan Kebijakan Privasi.',
+            'tanggal_lahir.after_or_equal' => 'Tanggal lahir tidak sesuai: usia anak paling tua 8 tahun.',
+            'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak sesuai: usia anak minimal 2 tahun. Pastikan tahun lahir sudah dipilih dengan benar.',
+        ]);
 
         $data['setuju_privasi_pada'] = now();
         $data['izin_foto_publik'] = $request->boolean('izin_foto_publik');

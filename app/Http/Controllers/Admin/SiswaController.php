@@ -74,7 +74,7 @@ class SiswaController extends Controller
             'nis' => ['required', 'string', 'max:20', Rule::unique('siswa', 'nis')->ignore($siswa)],
             'nama' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:L,P',
-            'tanggal_lahir' => 'required|date',
+            'tanggal_lahir' => 'required|date|before:today',
             'alamat' => 'nullable|string|max:255',
             'kelas_id' => 'nullable|exists:kelas,id',
             'orang_tua_id' => ['nullable', Rule::exists('users', 'id')->where('role', User::ORANG_TUA)],
